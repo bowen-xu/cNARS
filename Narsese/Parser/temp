@@ -1,0 +1,109 @@
+
+void* NARSESEPARSER::task(Args& args)
+{
+    void* ret;
+    auto n_args = args.size();
+    Budget &budget = (n_args == 1) ? *(new Budget(CONFIG::priority, CONFIG::durability, CONFIG::quality)) : *((Budget *)args[0]);
+    Sentence& sentence = (n_args == 1) ? *((Sentence *)args[0]) : *((Sentence *)args[1]);
+    Task &task = *(new Task(budget, sentence));
+    ret = &task;
+    return ret;
+}
+
+/* Sentence */
+void* NARSESEPARSER::judgement(Args& args)
+{
+    void* ret;
+    auto n_args = args.size();
+    Term &term = *(Term *)args[0];
+    Truth &truth = (n_args >= 2) ? *(Truth *)args[1] : *(new Truth(CONFIG::f, CONFIG::c, CONFIG::k));
+
+    auto &judgement = *(new Judgement(term, truth));
+    ret = &judgement;
+    return ret;
+}
+
+void* NARSESEPARSER::question(Args& args)
+{
+    void* ret;
+    auto n_args = args.size();
+    Term &term = *(Term *)args[0];
+
+    auto &question = *(new Question(term));
+    ret = &question;
+    return ret;
+}
+
+void* NARSESEPARSER::goal(Args& args)
+{
+    void* ret;
+    auto n_args = args.size();
+    Term &term = *(Term *)args[0];
+    Truth &desire = (n_args >= 2) ? *(Truth *)args[1] : *(new Truth(CONFIG::f, CONFIG::c, CONFIG::k));
+
+    auto &goal = *(new Goal(term, desire));
+    ret = &goal;
+    return ret;
+}
+
+void* NARSESEPARSER::quest(Args& args)
+{
+    void* ret;
+    auto n_args = args.size();
+    Term &term = *(Term *)args[0];
+
+    auto &quest = *(new Quest(term));
+    ret = &quest;
+    return ret;
+}
+
+/* Term */
+void* NARSESEPARSER::statement(Args& args)
+{
+    void* ret;
+    Term & subject = *(Term*)args[0];
+    Copula & copula = *(Copula*)args[1];
+    Term & predicate = *(Term*)args[2];
+    Statement &statement = *(new Statement(subject, copula, predicate));
+    ret = &statement;
+    return ret;
+}
+
+
+void* NARSESEPARSER::inheritance(Args& args)
+{
+    void* ret;
+    ret = (void*)&COPULA::INHERITANCE;
+    return ret;
+}
+
+
+void* NARSESEPARSER::string_raw(Args& args)
+{
+    void* ret;
+    auto& str = *(new std::string((char*)args[0]));
+    ret = &str;
+    return ret;
+}
+
+void* NARSESEPARSER::atom_term(Args& args)
+{
+    void* ret;
+    auto& str = *((std::string*)args[0]);
+    auto& term = *(new Term(str));
+
+    delete &str;
+    ret = &term;
+    return ret;
+}
+
+
+regist("task",          task            );
+    regist("statement",     statement       );
+    regist("judgement",     judgement       );
+    regist("question",      question        );
+    regist("goal",          goal            );
+    regist("quest",         quest           );
+    regist("inheritance",   inheritance     );
+    regist("atom_term",     atom_term       );
+    regist("string_raw",    string_raw      );

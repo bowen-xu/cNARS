@@ -1,0 +1,81 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile",
+            "command": "g++",
+            "args": [
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.exe",
+                "-g",
+                "-m64",
+                "-Wall",
+                "-static-libgcc",
+                "-fexec-charset=GBK",
+                "-D__USE_MINGW_ANSI_STDIO"
+            ],
+            "type": "process",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "CMake", // cmake .. -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+            "command": "cmake",
+            "args": [
+                "..",
+                "-G",
+                "MinGW Makefiles",
+                // "-DCMAKE_SH=\"CMAKE_SH-NOTFOUND\"",
+                // "--build",
+                // "${workspaceFolder}/build"
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "options":
+            {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "type": "process",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Make", // cmake .. -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+            "command": "mingw32-make.exe",
+            // "args": [
+            //     "--directory",
+            //     "${workspaceFolder}/build"
+            // ],
+            "options":
+            {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "type": "process",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "CMake_Make",
+            "dependsOn": [
+                "CMake",
+                "Make"
+            ]
+        }
+    ]
+}
