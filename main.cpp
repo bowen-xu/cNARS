@@ -1,50 +1,60 @@
-#include <string>
-#include "Narsese/Parser/NarseseParser.h"
-#include "Narsese/include/Task.h"
-#include "Narsese/include/Statement.h"
-#include "Narsese/Parser/generate.h"
+#include <fmt/core.h>
+#include <fmt/color.h>
 
-using TASK::Task;
-
-// using namespace PARSER;
-using NARSESEPARSER::NarseseParser;
-int main( int argc, char** argv )
+int main()
 {
-	// GENERATE::generate();
-	// return 0;
-#define UNICCMAIN_SILENT		1
-#define UNICCMAIN_ENDLESS		2
-#define UNICCMAIN_LINEMODE		4
-#define UNICCMAIN_SYNTAXTREE	8
-#define UNICCMAIN_AUGSYNTAXTREE	16
-
-	char*				opt;
-	int					flags	= 0;
-	NarseseParser*	parser = new NarseseParser;
-
-#ifdef LC_ALL
-	setlocale( LC_ALL, "" );
-#endif
-
-	printf("go:\n");
-
-	/* Get command-line options */
-	flags |= UNICCMAIN_SILENT;\
-	flags |= UNICCMAIN_LINEMODE;
-
-	const char* test_cases[] = {
-		"<robin-->bird>.",
-		"(&&, A, B).",
-	};
-	std::string input(test_cases[1]);
-	
-	for (int i=0; i<1; i++)
-	{
-		Task& task = *((Task*)parser->parse_string(input));
-	}
-
+	auto str = fmt::format(fmt::emphasis::bold | fg(fmt::rgb(0, 0, 255)),
+				"Elapsed time: {0:.2f} seconds", 1.23);
+	fmt::print(str);
 	return 0;
 }
+// #include <string>
+// #include "Narsese/Parser/NarseseParser.h"
+// #include "Narsese/include/Task.h"
+// #include "Narsese/include/Statement.h"
+// #include "Narsese/Parser/generate.h"
+
+// using TASK::Task;
+
+// // using namespace PARSER;
+// using NARSESEPARSER::NarseseParser;
+// int main( int argc, char** argv )
+// {
+// 	// GENERATE::generate();
+// 	// return 0;
+// #define UNICCMAIN_SILENT		1
+// #define UNICCMAIN_ENDLESS		2
+// #define UNICCMAIN_LINEMODE		4
+// #define UNICCMAIN_SYNTAXTREE	8
+// #define UNICCMAIN_AUGSYNTAXTREE	16
+
+// 	char*				opt;
+// 	int					flags	= 0;
+// 	NarseseParser*	parser = new NarseseParser;
+
+// #ifdef LC_ALL
+// 	setlocale( LC_ALL, "" );
+// #endif
+
+// 	printf("go:\n");
+
+// 	/* Get command-line options */
+// 	flags |= UNICCMAIN_SILENT;\
+// 	flags |= UNICCMAIN_LINEMODE;
+
+// 	const char* test_cases[] = {
+// 		"<robin-->bird>.",
+// 		"(&&, A, B).",
+// 	};
+// 	std::string input(test_cases[1]);
+	
+// 	for (int i=0; i<1; i++)
+// 	{
+// 		Task& task = *((Task*)parser->parse_string(input));
+// 	}
+
+// 	return 0;
+// }
 
 // #include <stdio.h>
 // #include <iostream>

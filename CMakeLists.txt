@@ -9,7 +9,8 @@ set(CMAKE_BUILD_TYPE Debug)
 project(cNARS)
 
 find_package(Boost 1.45.0 COMPONENTS spirit) 
-include_directories(${Boost_INCLUDE_DIRS}) 
+include_directories(${Boost_INCLUDE_DIRS})
+find_package(fmt)
 
 
 file(GLOB SOURCES_NARSESE Narsese/src/*.cpp )
@@ -27,3 +28,4 @@ target_include_directories(main PUBLIC
 "${PROJECT_SOURCE_DIR}/utils"
 )
 target_link_libraries(main ${Boost_LIBRARIES})
+target_link_libraries(main fmt::fmt)
