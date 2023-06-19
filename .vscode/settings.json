@@ -117,7 +117,10 @@
         "version": "cpp",
         "format": "cpp",
         "bit": "cpp",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "__availability": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp"
     },
-    "C_Cpp.default.cppStandard": "c++20"
+    "C_Cpp.default.cppStandard": "c++20",
 }

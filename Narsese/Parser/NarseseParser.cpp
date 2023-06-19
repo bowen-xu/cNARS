@@ -9,11 +9,17 @@
 #include "Config.h"
 #include "Narsese/include/Budget.h"
 #include "Narsese/include/Task.h"
+#include "Interpreter/include/Interpreter.hpp"
 #include <iostream>
 #include <list>
 #include <functional>   // std::reference_wrapper
+#include <memory>
+
+using std::shared_ptr;
+
 // using CONFIG::Config;
 using BUDGET::Budget;
+using BUDGET::pBudget;
 using COMPOUND::Compound;
 using COMPOUND::Connector;
 using COPULA::Copula;
@@ -21,16 +27,19 @@ using SENTENCE::Goal;
 using SENTENCE::Judgement;
 using SENTENCE::Quest;
 using SENTENCE::Question;
+using SENTENCE::pSentence;
 using SENTENCE::Sentence;
 using STATEMENT::Statement;
 using TASK::Task;
+using TERM::pTerm;
 using TERM::Term;
+using TRUTH::pTruth;
 using TRUTH::Truth;
 // using namespace COPULA::COPULA;
 
 using namespace NARSESEPARSER;
 
-
+// extern INTERPRETER::Interpreter INTERPRETER::interpreter;
 
 /*definitions*/
 void* NARSESEPARSER::task(Args& args)
@@ -39,7 +48,7 @@ void* NARSESEPARSER::task(Args& args)
     auto n_args = args.size();
     Budget &budget = (n_args == 1) ? *(new Budget(CONFIG::priority, CONFIG::durability, CONFIG::quality)) : *((Budget *)args[0]);
     Sentence& sentence = (n_args == 1) ? *((Sentence *)args[0]) : *((Sentence *)args[1]);
-    Task &task = *(new Task(budget, sentence));
+    Task &task = *(new Task(pBudget(&budget), pSentence(&sentence)));
     ret = &task;
     return ret;
 }
@@ -51,7 +60,7 @@ void* NARSESEPARSER::judgement(Args& args)
     Term &term = *(Term *)args[0];
     Truth &truth = (n_args >= 2) ? *(Truth *)args[1] : *(new Truth(CONFIG::f, CONFIG::c, CONFIG::k));
 
-    auto &judgement = *(new Judgement(term, truth));
+    auto &judgement = *(new Judgement(pTerm(&term), pTruth(&truth)));
     ret = &judgement;
     return ret;
 }
@@ -62,7 +71,7 @@ void* NARSESEPARSER::question(Args& args)
     auto n_args = args.size();
     Term &term = *(Term *)args[0];
 
-    auto &question = *(new Question(term));
+    auto &question = *(new Question(pTerm(&term)));
     ret = &question;
     return ret;
 }
@@ -74,7 +83,7 @@ void* NARSESEPARSER::goal(Args& args)
     Term &term = *(Term *)args[0];
     Truth &desire = (n_args >= 2) ? *(Truth *)args[1] : *(new Truth(CONFIG::f, CONFIG::c, CONFIG::k));
 
-    auto &goal = *(new Goal(term, desire));
+    auto &goal = *(new Goal(pTerm(&term), pTruth(&desire)));
     ret = &goal;
     return ret;
 }
@@ -85,7 +94,7 @@ void* NARSESEPARSER::quest(Args& args)
     auto n_args = args.size();
     Term &term = *(Term *)args[0];
 
-    auto &quest = *(new Quest(term));
+    auto &quest = *(new Quest(pTerm(&term)));
     ret = &quest;
     return ret;
 }
@@ -96,8 +105,29 @@ void* NARSESEPARSER::statement(Args& args)
     Term & subject = *(Term*)args[0];
     Copula & copula = *(Copula*)args[1];
     Term & predicate = *(Term*)args[2];
-    Statement &statement = *(new Statement(subject, copula, predicate));
-    ret = &statement;
+	Statement *statement;
+	if (copula == Copula::Instance)
+	{
+		auto instance = Compound::ExtensionalSet({pTerm(&subject)});
+		statement = new Statement(instance, Copula::Inheritance, pTerm(&predicate));
+	}
+	else if (copula == Copula::Property)
+	{
+		auto property = Compound::IntensionalSet({pTerm(&predicate)});
+		statement = new Statement(pTerm(&subject), Copula::Inheritance, property);
+	}
+	else if (copula == Copula::InstanceProperty)
+	{
+		auto instance = Compound::ExtensionalSet({pTerm(&subject)});
+		auto property = Compound::IntensionalSet({pTerm(&predicate)});
+		statement = new Statement(instance, Copula::Inheritance, property);
+
+	}
+	else
+	{
+		statement = new Statement(pTerm(&subject), copula, pTerm(&predicate));
+	}
+    ret = statement;
     return ret;
 }
 
@@ -120,56 +150,67 @@ void* NARSESEPARSER::inheritance(Args& args)
 void* NARSESEPARSER::similarity(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::SIMILARITY;
 	return ret;
 }
 void* NARSESEPARSER::instance(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::INSTANCE;
 	return ret;
 }
 void* NARSESEPARSER::property(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::PROPERTY;
 	return ret;
 }
 void* NARSESEPARSER::instance_property(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::INSTANCEPROPERTY;
 	return ret;
 }
 void* NARSESEPARSER::implication(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::IMPLICATION;
 	return ret;
 }
 void* NARSESEPARSER::predictive_implication(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::PREDICTIVEIMPLICATION;
 	return ret;
 }
 void* NARSESEPARSER::concurrent_implication(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::CONCURRENTIMPLICATION;
 	return ret;
 }
 void* NARSESEPARSER::retrospective_implication(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::RETROSPECTIVEIMPLICATION;
 	return ret;
 }
 void* NARSESEPARSER::equivalence(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::EQUIVALENCE;
 	return ret;
 }
 void* NARSESEPARSER::predictive_equivalence(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::PREDICTIVEEQUIVALENCE;
 	return ret;
 }
 void* NARSESEPARSER::concurrent_equivalence(Args& args)
 {
 	void* ret;
+    ret = (void*)&COPULA::CONCURRENTEQUIVALENCE;
 	return ret;
 }
 void* NARSESEPARSER::variable_term(Args& args)
@@ -181,9 +222,10 @@ void* NARSESEPARSER::atom_term(Args& args)
 {
     void* ret;
     auto& str = *((std::string*)args[0]);
-    auto& term = *(new Term(str));
+    auto& term = *(new Term());
+	INTERPRETER::interpreter.put(term.hash_value, str);
 
-    delete &str;
+	delete &str;
     ret = &term;
     return ret;
 }
@@ -197,6 +239,8 @@ void* NARSESEPARSER::compound_term(Args& args)
 void* NARSESEPARSER::statement_term(Args& args)
 {
     void* ret;
+	auto &statement = *(Statement *)args[0];
+    ret = &statement;
     return ret;
 }
 void* NARSESEPARSER::op(Args& args)
@@ -239,11 +283,11 @@ void* NARSESEPARSER::multi_prefix(Args& args)
 	void* ret;
     auto it = args.begin();
     auto& connector = *((Connector *)*it);
-    std::list<Term*> terms;
+    std::list<pTerm> terms;
     
     for (it++; it != args.end(); it++)
     {
-        terms.push_back((Term *)*it);
+        terms.push_back(pTerm((Term *)*it));
     }
     auto &compound = *(new Compound(connector, terms));
     // Compound(connector, {(Term *)args[1], (Term *)args[1]});

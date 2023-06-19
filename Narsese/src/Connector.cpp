@@ -4,7 +4,6 @@ using namespace CONNECTOR;
 
 namespace CONNECTOR
 {
-    const char *Repr[] = {"&&", "||", "*", "&|", "&/", "|", "&", "-", "~", "--", "[", "{", "\\", "/", "#"};
     
     bool _commutative[] = {true, true, false, true, false, true, true, false, false, false, true, true, false, false, false};
     bool _single_only[] = {false, false, false, false, false, false, false, false, false, true, false, false, false, false, false};

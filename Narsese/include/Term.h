@@ -6,6 +6,8 @@
 #include "Copula.h"
 #include "Connector.h"
 #include "../utils/hash.h"
+#include <memory>
+
 // #include "../utils/repr.h"
 
 namespace TERM
@@ -51,9 +53,9 @@ namespace TERM
 
         // Term(int hash_value);
         // Term(char *_word);
-        string word;
-        Term(){};
-        Term(std::string _word) : word(_word) {}
+        // string word;
+        Term() : hash_value((size_t)this){};
+        // Term(std::string _word) : word(_word) {}
 
         // bool __eq__(Term o)
         // {   
@@ -68,6 +70,7 @@ namespace TERM
 
     };
 
+    typedef std::shared_ptr<Term> pTerm;
 } // namespace Term
 
 

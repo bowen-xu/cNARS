@@ -1,6 +1,9 @@
 #ifndef _BUDGET_H
 #define _BUDGET_H
 
+#include <memory>
+
+
 namespace BUDGET
 {
     class Budget
@@ -17,6 +20,8 @@ namespace BUDGET
 
         Budget(float priority=_priority_default, float durability=_durability_default, float quality=_quality_default) : priority(priority), durability(durability), quality(quality) {};
     };
+
+    typedef std::shared_ptr<Budget> pBudget;
 } // namespace BUDGET
 
 

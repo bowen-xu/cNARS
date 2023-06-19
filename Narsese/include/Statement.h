@@ -6,6 +6,7 @@
 #include "Term.h"
 #include "../utils/hash.h"
 #include "../utils/defines.h"
+#include <memory>
 
 namespace STATEMENT
 {
@@ -13,6 +14,7 @@ namespace STATEMENT
     using COPULA::Copula;
     using std::string;
     using std::unordered_set;
+    using TERM::pTerm;
     using TERM::Term;
     using UTILS::hash_str;
 
@@ -24,16 +26,16 @@ namespace STATEMENT
         // bool is_commutative;
         // bool is_higher_order;
 
-        Term& subject;
-        Term& predicate;
-        // Copula copula;
+        pTerm subject;
+        pTerm predicate;
+        Copula copula;
 
-        unordered_set<Term*> components;
+        unordered_set<pTerm*> components;
 
 
     public:
         // Statement(Term &_subject, Copula &_copula, Term &_predicate) : subject(_subject), predicate(_predicate), copula(_copula) {}
-        Statement(Term& _subject, Copula _copula, Term& _predicate);
+        Statement(pTerm _subject, Copula p_copula, pTerm _predicate);
         // Statement();
 
         // const char* operator () ()
@@ -53,6 +55,8 @@ namespace STATEMENT
     //     }
 
     };
+
+    // typedef std::shared_ptr<Term> pStatement;
 } // namespace STATEMENT
 
 

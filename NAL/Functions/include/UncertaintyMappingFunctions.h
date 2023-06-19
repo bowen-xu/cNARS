@@ -10,7 +10,7 @@ namespace UNCERTAINTY_MAPPING_FUNCTIONS
     inline float fc_to_w(float f, float c, float k) { return k * c / (1 - c); }
     inline float fc_to_w_minus(float f, float c, float k) { return k * (1 - f) * c / (1 - c); }
     inline float w_to_f(float w_plus, float w) { return w_plus / w; }
-    inline float w_to_c(float w_plus, float k) { return w / (w + k); }
+    inline float w_to_c(float w, float k) { return w / (w + k); }
 
     Truth truth_from_w(float w_plus, float w, float k);
     tuple<float, float> w_from_truth(Truth &truth);

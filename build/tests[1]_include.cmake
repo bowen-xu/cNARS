@@ -1,0 +1,5 @@
+if(EXISTS "/Users/bowenxu/Codes/cNARS/build/tests[1]_tests.cmake")
+  include("/Users/bowenxu/Codes/cNARS/build/tests[1]_tests.cmake")
+else()
+  add_test(tests_NOT_BUILT tests_NOT_BUILT)
+endif()

@@ -1,19 +1,29 @@
-#ifndef _INTERPRETER_H
-#define _INTERPRETER_H
+#ifndef _INTERPRETER_H_
+#define _INTERPRETER_H_
 
 #include <map>
 #include <string>
+#include "Narsese/include/Task.h"
+#include "Narsese/include/Term.h"
+#include "Narsese/include/Statement.h"
+#include "Narsese/include/Compound.h"
+#include <iomanip>
+#include <sstream>
 
 namespace INTERPRETER
 {
     using std::map;
     using std::string;
+    using TASK::Task;
+    using TERM::Term;
+    using TERM::TermType;
+
     class Interpreter
     {
     public:
-        map<int, string> dictionary;
-        map<string, int> dictionary_inv;
-        map<int, int> count;
+        map<size_t, string> dictionary;
+        map<string, size_t> dictionary_inv;
+        map<size_t, int> count;
 
         inline void put(int key, string name) 
         { 
@@ -22,7 +32,7 @@ namespace INTERPRETER
             count[key] = (check_count(key) == 0) ? 1 : (count[key] + 1);
         }
 
-        inline string get(int key) { return dictionary[key]; }
+        inline string &get(int key) { return dictionary[key]; }
         inline int get_by_name(string name) { return dictionary_inv[name]; }
         inline bool check(int key) { return dictionary.count(key) == 1; }
         inline bool check_by_name(string name) { return dictionary_inv.count(name) == 1; }
@@ -93,9 +103,21 @@ namespace INTERPRETER
                 return false;
             }
         }
+
+        string interpret(Term &term);
+
+        string interpret(Task &task);
+
+        inline void colored(bool set=true)
+        {
+            this->_is_colored = set;
+        }
+
+    private:
+        bool _is_colored = true;
     };
 
-    Interpreter interpreter;
+    extern Interpreter interpreter;
 }
 
-#endif // _INTERPRETER_H
+#endif // _INTERPRETER_H_

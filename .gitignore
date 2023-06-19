@@ -1,4 +1,6 @@
 libraries
+main
+tests
 
 .DS_Store
 

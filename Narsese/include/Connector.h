@@ -1,8 +1,11 @@
 #ifndef _CONNECTOR_H
 #define _CONNECTOR_H
 
+#include <string>
+
 namespace CONNECTOR
 {
+    using std::string;
     enum Connector
     {
         None = -1,
@@ -38,7 +41,8 @@ namespace CONNECTOR
     const Connector EXTENSIONAL_IMAGE = Connector::ExtensionalImage;
     const Connector LIST = Connector::List;
 
-    extern const char *Repr[];
+    const string Repr[] = {string("&&"), string("||"), string("*"), string("&|"), string("&/"), string("|"), string("&"), string("-"), string("~"), string("--"), string("["), string("{"), string("\\"), string("/"), string("#")};
+    // extern const char *Repr[];
     // const char *Repr[] = {"&&", "||", "*", "&|", "&/", "|", "&", "-", "~", "--", "[", "{", "\\", "/", "#"};
 
     extern bool _commutative[];

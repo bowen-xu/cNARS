@@ -23,6 +23,17 @@ namespace COPULA
         ConcurrentEquivalence = 11      // <|>
     };
     const Copula INHERITANCE = Copula::Inheritance;
+    const Copula SIMILARITY = Copula::Similarity;
+    const Copula INSTANCE = Copula::Instance;
+    const Copula PROPERTY = Copula::Property;
+    const Copula INSTANCEPROPERTY = Copula::InstanceProperty;
+    const Copula IMPLICATION = Copula::Implication;
+    const Copula PREDICTIVEIMPLICATION = Copula::PredictiveImplication;
+    const Copula CONCURRENTIMPLICATION = Copula::ConcurrentImplication;
+    const Copula RETROSPECTIVEIMPLICATION = Copula::RetrospectiveImplication;
+    const Copula EQUIVALENCE = Copula::Equivalence;
+    const Copula PREDICTIVEEQUIVALENCE = Copula::PredictiveEquivalence;
+    const Copula CONCURRENTEQUIVALENCE = Copula::ConcurrentEquivalence;
 
 
 

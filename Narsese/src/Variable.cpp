@@ -6,7 +6,7 @@ namespace VARIABLE
 
     Variable::Variable(VarPrefix _prefix, string _name, bool do_hashing, bool is_input) 
     {
-        word = _repr_prefix[_prefix];
+        // word = _repr_prefix[_prefix];
         prefix = _prefix;
         name = _name;
 

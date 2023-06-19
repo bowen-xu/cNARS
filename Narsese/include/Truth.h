@@ -1,6 +1,9 @@
 #ifndef _TRUTH_H
 #define _TRUTH_H
 
+#include <memory>
+
+
 namespace TRUTH
 {
     class Truth
@@ -14,6 +17,8 @@ namespace TRUTH
         float e();
     };
     typedef Truth Desire;
+
+    typedef std::shared_ptr<Truth> pTruth;
 } // namespace TRUTH
 
 #endif //_TRUTH_H

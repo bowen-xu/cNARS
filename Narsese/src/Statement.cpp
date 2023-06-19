@@ -8,7 +8,7 @@ using TERM::Term;
 
 using namespace STATEMENT;
 
-Statement::Statement(Term& _subject, Copula _copula, Term& _predicate) : subject(_subject), predicate(_predicate)
+Statement::Statement(pTerm _subject, Copula _copula, pTerm _predicate) : subject(_subject), predicate(_predicate)
 {
     this->type = TermType::STATEMENT;
     this->copula = _copula;

@@ -7,14 +7,16 @@
 namespace TASK
 {
     using BUDGET::Budget;
+    using BUDGET::pBudget;
     using SENTENCE::Judgement;
+    using SENTENCE::pSentence;
     using SENTENCE::Sentence;
     class Task
     {
     public:
-        Budget& budget;
-        Sentence& sentence;
-        Task(Budget &_budget, Sentence &_sentence) : budget(_budget), sentence(_sentence){}
+        pBudget budget;
+        pSentence sentence;
+        Task(pBudget _budget, pSentence _sentence) : budget(_budget), sentence(_sentence) {}
     };
 } // namespace TAKS
 
