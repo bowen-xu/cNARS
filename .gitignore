@@ -1,6 +1,5 @@
 libraries
-main
-tests
+build
 
 .DS_Store
 
