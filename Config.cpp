@@ -18,7 +18,7 @@ namespace CONFIG
     float p_question =0.9;
     float d_question =0.9;
     float p_quest =0.9;
-    float d_quest =0.9;;
+    float d_quest =0.9;
     float p_goal =0.9;
     float d_goal =0.9;
 

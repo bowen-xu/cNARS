@@ -1282,7 +1282,7 @@ class _parser
 			{ /* 188 */ "con_multi : &/'", "con_sequential_events", 1, 175 },
 			{ /* 189 */ "con_multi : |'", "con_intensional_intersection", 1, 175 },
 			{ /* 190 */ "con_multi : &'", "con_extensional_intersection", 1, 175 },
-			{ /* 191 */ "con_product : *'", "", 1, 172 },
+			{ /* 191 */ "con_product : *'", "con_product", 1, 172 },
 			{ /* 192 */ "con_single : -'", "con_extensional_difference", 1, 167 },
 			{ /* 193 */ "con_single : ~'", "con_intensional_difference", 1, 167 },
 			{ /* 194 */ "con_int_set : ['", "con_int_set", 1, 196 },

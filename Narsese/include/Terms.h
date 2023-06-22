@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <iterator>
 
 namespace TERMS
 {
@@ -16,6 +17,7 @@ namespace TERMS
         Terms(){};
         Terms(std::list<pTerm> &terms)
         {
+            auto it = terms.begin();
             for (auto it = terms.begin(); it != terms.end(); it++)
             {
                 this->terms.push_back((*it));

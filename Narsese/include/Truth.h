@@ -14,7 +14,11 @@ namespace TRUTH
         float k;
 
         inline Truth(float f, float c, float k=1.0) : f(f), c(c), k(k) {};
-        float e();
+
+        inline double e() const
+        {
+            return (c * (f - 0.5) + 0.5);
+        }
     };
     typedef Truth Desire;
 

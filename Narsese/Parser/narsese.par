@@ -122,7 +122,7 @@ con_multi : "&&"        = con_conjunction               // (* conjunction *)
         | "&"           = con_extensional_intersection  // (* extensional intersection *)
 ;
 
-con_product: "*";                                       // (* product *)
+con_product: "*"        = con_product;                  // (* product *)
 
 con_single : "-"        = con_extensional_difference    // (* extensional difference *)
         | "~"           = con_intensional_difference    // (* intensional difference *)

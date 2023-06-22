@@ -3,6 +3,7 @@
 
 #include "./Budget.h"
 #include "./Sentence.h"
+#include <memory>
 
 namespace TASK
 {
@@ -18,6 +19,8 @@ namespace TASK
         pSentence sentence;
         Task(pBudget _budget, pSentence _sentence) : budget(_budget), sentence(_sentence) {}
     };
+
+    typedef std::shared_ptr<Task> pTask;
 } // namespace TAKS
 
 #endif // _TAKS_H_

@@ -8,6 +8,7 @@
 #include "Interpreter/include/Interpreter.hpp"
 #include "Narsese/Parser/NarseseParser.h"
 #include "Narsese/include/Task.h"
+#include <boost/algorithm/string.hpp>
 
 #include <algorithm>
 
@@ -22,15 +23,6 @@ auto root = string("../examples/single_step");
 bool isdigits(const std::string &str)
 {
     return std::all_of(str.begin(), str.end(), ::isdigit);
-}
-
-bool startswith(const std::string &str, string chs)
-{
-    if (str.empty())
-    {
-        return false; // 字符串为空，无法判断开头字符
-    }
-    return str.substr(0, chs.length()) == chs;
 }
 
 int test_parse_nal(int i)
@@ -57,14 +49,18 @@ int test_parse_nal(int i)
                     if (isdigits(input))
                     {
                     }
-                    else if (startswith(input, "'"))
+                    else if (input.starts_with('\''))
                     {
                     }
                     else
                     {
-                        Task &task = *((Task *)parser->parse_string(input));
-                        auto str = interpreter.interpret(task);
-                        printf("%s\n", str.c_str());
+                        boost::trim(input);
+                        if (input.length() > 0)
+                        {
+                            auto task = parser->parse_task(input);
+                            auto str = interpreter.interpret(*task);
+                            printf("%s\n", str.c_str());
+                        }
                     }
                 }
                 file.close();
@@ -92,8 +88,8 @@ int test_parse_line(string line)
     NarseseParser *parser = new NarseseParser;
     try
     {
-        Task &task = *((Task *)parser->parse_string(line));
-        auto str = interpreter.interpret(task);
+        auto task = parser->parse_task(line);
+        auto str = interpreter.interpret(*task);
         printf("%s\n", str.c_str());
     }
     catch(void*)
@@ -115,7 +111,18 @@ int test_parse_line(string line)
 //     GTEST_ASSERT_EQ(test_parse_nal(2), 0);
 // }
 
+// TEST(test_parser, test_parse_nal3)
+// {
+//     GTEST_ASSERT_EQ(test_parse_nal(3), 0);
+// }
+
+// TEST(test_parser, test_parse_nal4)
+// {
+//     GTEST_ASSERT_EQ(test_parse_nal(4), 0);
+// }
+
+
 TEST(test_parser, test_parse_line)
 {
-    GTEST_ASSERT_EQ(test_parse_line("< Tweety {-- bird >."), 0);
+    GTEST_ASSERT_EQ(test_parse_line("<acid --> (/,reaction,_,base)>."), 0);
 }

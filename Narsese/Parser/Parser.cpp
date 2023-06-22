@@ -27,7 +27,11 @@ Parser::Parser()
     // std::cout << "valid count: " << valid_cnt << std::endl;
 }
 
-
+TASK::pTask Parser::parse_task(std::string& input)
+{
+    TASK::Task *task = ((TASK::Task *)this->parse_string(input));
+    return TASK::pTask(task);
+}
 
 void* Parser::parse_string(std::string& input)
 {

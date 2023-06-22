@@ -9,44 +9,42 @@
 // #include "Narsese/include/Truth.h"
 // #include "Narsese/include/Sentence.h"
 // #include "Narsese/include/Task.h"
+#include "./narsese.h"
+#include "Narsese/include/Task.h"
 #include <unordered_map>
 #include <vector>
-#include "./narsese.h"
 // #include "./Transformer.h"
 
 namespace PARSER
 {
     typedef std::vector<void *> Args;
-    typedef void *(*METHOD)(std::vector<void *> &);
+    typedef void *(*METHOD)(const std::vector<void *> &);
 
     class Parser : public _parser
     {
     public:
         // TRANSFORMER::Transformer transformer;
-        std::unordered_map<const char*, long> map;
+        std::unordered_map<const char *, long> map;
 
         Parser();
 
+        Args *transform(_ast *node);
 
-        Args *transform(_ast *node);    
-
-        void* parse_string(std::string &input);
-        void* parse_input();
+        TASK::pTask parse_task(std::string &input);
+        void *parse_string(std::string &input);
+        void *parse_input();
         void regist(const char *name, METHOD function);
 
-
-        inline long get_function(const char* name)
+        inline long get_function(const char *name)
         {
             auto it = map.find(name);
 
-            if(it != map.end() )
+            if (it != map.end())
                 return it->second;
             return 0;
         }
     };
 
-    
-    
 }
 
 #endif // _PARSER_H_

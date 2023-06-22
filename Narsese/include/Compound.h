@@ -30,6 +30,7 @@ namespace COMPOUND
         Compound(Connector connector, std::list<pTerm> &terms);
         // Compound(Connector connector, std::initializer_list<Term&> terms);
         Compound(Connector connector, std::initializer_list<pTerm> terms);
+        Compound(Connector connector, pTerm term) : Compound(connector, {term}) {};
 
         static auto ExtensionalSet(std::initializer_list<pTerm> terms)
         {
@@ -39,6 +40,7 @@ namespace COMPOUND
         {
             return pTerm(new Compound(Connector::IntensionalSet, terms));
         }
+        // static auto 
 
     private:
         Compound(Connector &connector) : terms(pTerms(new Terms))
