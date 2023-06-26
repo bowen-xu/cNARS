@@ -29,6 +29,9 @@ Parser::Parser()
 
 TASK::pTask Parser::parse_task(std::string& input)
 {
+    names_ivar.clear();
+    names_dvar.clear();
+    names_qvar.clear();
     TASK::Task *task = ((TASK::Task *)this->parse_string(input));
     return TASK::pTask(task);
 }
@@ -114,5 +117,5 @@ Args* Parser::transform(_ast* node)
 
 void Parser::regist(const char *name, METHOD function)
 {
-    map[name] = (long)function;
+    _map[name] = (long)function;
 }

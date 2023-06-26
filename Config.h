@@ -1,8 +1,13 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#define _LIST_BOOST 0
+#define _LIST_STD 1
+#define SRC_LIST _LIST_BOOST //_LIST_STD
+
 namespace CONFIG
 {
+
     extern float priority; // = 0.8
     extern float durability; // = 0.8
     extern float quality; // = 0.5

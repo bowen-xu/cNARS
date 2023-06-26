@@ -4,7 +4,7 @@ namespace VARIABLE
 {
     string _repr_prefix[] = {"$", "#", "?"};
 
-    Variable::Variable(VarPrefix _prefix, string _name, bool do_hashing, bool is_input) 
+    Variable::Variable(VarPrefix _prefix, string _name) : Term()
     {
         // word = _repr_prefix[_prefix];
         prefix = _prefix;

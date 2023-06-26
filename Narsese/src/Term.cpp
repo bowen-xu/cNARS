@@ -5,7 +5,6 @@
 
 using namespace TERM;
 using std::string;
-using UTILS::hash_str;
 
 // Term::Term(int hash_value) {}
 // Term::Term(char *_word) : Term(string(_word)) {}

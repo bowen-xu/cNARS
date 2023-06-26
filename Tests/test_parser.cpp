@@ -124,5 +124,5 @@ int test_parse_line(string line)
 
 TEST(test_parser, test_parse_line)
 {
-    GTEST_ASSERT_EQ(test_parse_line("<acid --> (/,reaction,_,base)>."), 0);
+    GTEST_ASSERT_EQ(test_parse_line("<(*,bird,plant) --> ?x>? "), 0);
 }

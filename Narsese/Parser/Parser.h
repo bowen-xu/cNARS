@@ -23,8 +23,14 @@ namespace PARSER
     class Parser : public _parser
     {
     public:
-        // TRANSFORMER::Transformer transformer;
-        std::unordered_map<const char *, long> map;
+        /* function mappings from name to pointer */
+        std::unordered_map<const char *, long> _map;
+
+        /* variable mappings from name to index */
+        std::unordered_map<const char *, long> names_ivar;
+        std::unordered_map<const char *, long> names_dvar;
+        std::unordered_map<const char *, long> names_qvar;
+        
 
         Parser();
 
@@ -37,9 +43,9 @@ namespace PARSER
 
         inline long get_function(const char *name)
         {
-            auto it = map.find(name);
+            auto it = _map.find(name);
 
-            if (it != map.end())
+            if (it != _map.end())
                 return it->second;
             return 0;
         }

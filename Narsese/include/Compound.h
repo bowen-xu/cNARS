@@ -4,11 +4,23 @@
 #include "./Term.h"
 #include "./Connector.h"
 #include "./Terms.h"
-#include <list>
+// #include <list>
+#include <vector>
 #include <functional>
+#include "Config.h"
+
+#if SRC_LIST == LIST_BOOST
+#include <boost/container/list.hpp>
+using boost::container::list;
+#elif SRC_LIST == _LIST_STD
+#include <list>
+using std::list;
+#endif
 
 namespace COMPOUND
 {
+    
+
     using CONNECTOR::Connector;
     using std::string;
     using TERM::pTerm;
@@ -27,7 +39,8 @@ namespace COMPOUND
         inline auto& components() { return terms->terms; }
 
         Compound(Connector connector, pTerms terms);
-        Compound(Connector connector, std::list<pTerm> &terms);
+        Compound(Connector connector, list<pTerm> &terms);
+        Compound(Connector connector, std::vector<pTerm> &terms);
         // Compound(Connector connector, std::initializer_list<Term&> terms);
         Compound(Connector connector, std::initializer_list<pTerm> terms);
         Compound(Connector connector, pTerm term) : Compound(connector, {term}) {};

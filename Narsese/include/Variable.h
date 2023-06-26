@@ -28,7 +28,7 @@ namespace VARIABLE
         VarPrefix prefix;
 
     public:
-        Variable(VarPrefix _prefix, string _name, bool do_hashing=false, bool is_input=false);
+        Variable(VarPrefix _prefix, string _name);
 
     // public:
     //     operator string () const {

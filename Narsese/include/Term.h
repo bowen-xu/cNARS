@@ -6,6 +6,7 @@
 #include "Copula.h"
 #include "Connector.h"
 #include "../utils/hash.h"
+#include "../utils/IndexVar.h"
 #include <memory>
 
 // #include "../utils/repr.h"
@@ -15,9 +16,10 @@ namespace TERM
     using COPULA::Copula;
     using CONNECTOR::Connector;
     // using REPR::repr;
+    using INDEXVAR::IndexVar;
+    using INDEXVAR::pIndexVar;
     using std::string;
     using std::unordered_set;
-    using UTILS::hash_str;
 
     enum TermType
     {
@@ -47,9 +49,13 @@ namespace TERM
         bool is_operation : 1 = false;
 
         bool is_hashed : 1 = false;
-        unsigned int hash_value = 0;
+        size_t hash_value = 0;
 
         int complexity = 1; // The complexity of the term. Read only.
+
+        IndexVar _vars_independent = IndexVar();
+        IndexVar _vars_dependent = IndexVar();
+        IndexVar _vars_query = IndexVar();
 
         // Term(int hash_value);
         // Term(char *_word);

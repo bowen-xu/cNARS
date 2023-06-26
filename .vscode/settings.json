@@ -121,7 +121,8 @@
         "__availability": "cpp",
         "any": "cpp",
         "condition_variable": "cpp",
-        "__std_stream": "cpp"
+        "__std_stream": "cpp",
+        "*.ds_store": "cpp"
     },
     "C_Cpp.default.cppStandard": "c++20",
 }

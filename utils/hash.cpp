@@ -1,6 +1,7 @@
 #include <functional>
+#include "./hash.h"
 
 namespace UTILS
 {
-    std::hash<std::string> hash_str();
+
 } // namespace UTILS

@@ -9,10 +9,15 @@
 #include "Narsese/include/Task.h"
 #include "Narsese/include/Term.h"
 #include "Narsese/include/Truth.h"
+#include "Narsese/include/Variable.h"
 #include <functional> // std::reference_wrapper
 #include <iostream>
-#include <list>
 #include <memory>
+// #include <list>
+#include <vector>
+// #include <boost/container/list.hpp>
+
+// using std::list;
 
 using std::shared_ptr;
 
@@ -34,6 +39,7 @@ using TERM::pTerm;
 using TERM::Term;
 using TRUTH::pTruth;
 using TRUTH::Truth;
+using VARIABLE::Variable;
 // using namespace COPULA::COPULA;
 
 using namespace NARSESEPARSER;
@@ -49,33 +55,45 @@ void *NARSESEPARSER::task(const Args &args)
 	Sentence &sentence = (n_args == 1) ? *((Sentence *)args[0]) : *((Sentence *)args[1]);
 	if (sentence.is_judgement())
 	{
-		if (budget.priority < -0.5) budget.priority = CONFIG::p_judgement;
-		if (budget.durability < -0.5) budget.durability = CONFIG::d_judgement;
-		if (budget.quality < -0.5) budget.quality = Budget::quality_from_truth(*sentence.truth);
+		if (budget.priority < -0.5)
+			budget.priority = CONFIG::p_judgement;
+		if (budget.durability < -0.5)
+			budget.durability = CONFIG::d_judgement;
+		if (budget.quality < -0.5)
+			budget.quality = Budget::quality_from_truth(*sentence.truth);
 	}
 	else if (sentence.is_goal())
 	{
-		if (budget.priority < -0.5) budget.priority = CONFIG::p_goal;
-		if (budget.durability < -0.5) budget.durability = CONFIG::d_goal;
-		if (budget.quality < -0.5) budget.quality = Budget::quality_from_truth(*sentence.truth);
+		if (budget.priority < -0.5)
+			budget.priority = CONFIG::p_goal;
+		if (budget.durability < -0.5)
+			budget.durability = CONFIG::d_goal;
+		if (budget.quality < -0.5)
+			budget.quality = Budget::quality_from_truth(*sentence.truth);
 	}
 	else if (sentence.is_question())
 	{
-		if (budget.priority < -0.5) budget.priority = CONFIG::p_question;
-		if (budget.durability < -0.5) budget.durability = CONFIG::d_question;
-		if (budget.quality < -0.5) budget.quality = 1.0;
+		if (budget.priority < -0.5)
+			budget.priority = CONFIG::p_question;
+		if (budget.durability < -0.5)
+			budget.durability = CONFIG::d_question;
+		if (budget.quality < -0.5)
+			budget.quality = 1.0;
 	}
 	else if (sentence.is_quest())
 	{
-		if (budget.priority < -0.5) budget.priority = CONFIG::p_quest;
-		if (budget.durability < -0.5) budget.durability = CONFIG::d_quest;
-		if (budget.quality < -0.5) budget.quality = 1.0;
+		if (budget.priority < -0.5)
+			budget.priority = CONFIG::p_quest;
+		if (budget.durability < -0.5)
+			budget.durability = CONFIG::d_quest;
+		if (budget.quality < -0.5)
+			budget.quality = 1.0;
 	}
 	else
 	{
 		throw std::runtime_error("Sentence type is invalid.");
 	}
-	
+
 	Task &task = *(new Task(pBudget(&budget), pSentence(&sentence)));
 	ret = &task;
 	return ret;
@@ -90,9 +108,12 @@ void *NARSESEPARSER::judgement(const Args &args)
 	if (n_args >= 2)
 	{
 		truth = (Truth *)args[1];
-		if (truth->f < -0.5) truth->f = CONFIG::f;
-		if (truth->c < -0.5) truth->c = CONFIG::c_judgement;
-		if (truth->k < -0.5) truth->k = CONFIG::k;
+		if (truth->f < -0.5)
+			truth->f = CONFIG::f;
+		if (truth->c < -0.5)
+			truth->c = CONFIG::c_judgement;
+		if (truth->k < -0.5)
+			truth->k = CONFIG::k;
 	}
 	else
 	{
@@ -124,9 +145,12 @@ void *NARSESEPARSER::goal(const Args &args)
 	if (n_args >= 2)
 	{
 		desire = (Truth *)args[1];
-		if (desire->f < -0.5) desire->f = CONFIG::f;
-		if (desire->c < -0.5) desire->c = CONFIG::c_goal;
-		if (desire->k < -0.5) desire->k = CONFIG::k;
+		if (desire->f < -0.5)
+			desire->f = CONFIG::f;
+		if (desire->c < -0.5)
+			desire->c = CONFIG::c_goal;
+		if (desire->k < -0.5)
+			desire->k = CONFIG::k;
 	}
 	else
 	{
@@ -271,11 +295,20 @@ void *NARSESEPARSER::atom_term(const Args &args)
 {
 	void *ret;
 	auto &str = *((std::string *)args[0]);
-	auto &term = *(new Term());
-	INTERPRETER::interpreter.put(term.hash_value, str);
+	Term *term;
+	if (INTERPRETER::interpreter.check_by_name(str) > 0)
+	{
+		auto key = INTERPRETER::interpreter.get_by_name(str);
+		term = (Term*)INTERPRETER::interpreter.get_object(key);
+	}
+	else
+	{
+		term = (new Term());
+		INTERPRETER::interpreter.put(term->hash_value, str, (void*)term);
+	}
 
 	delete &str;
-	ret = &term;
+	ret = term;
 	return ret;
 }
 void *NARSESEPARSER::compound_term(const Args &args)
@@ -307,7 +340,7 @@ void *NARSESEPARSER::set(const Args &args)
 	void *ret;
 	auto it = args.begin();
 	auto &connector = *((Connector *)*it);
-	std::list<pTerm> terms;
+	list<pTerm> terms;
 
 	for (it++; it != args.end(); it++)
 	{
@@ -333,31 +366,10 @@ void *NARSESEPARSER::int_image(const Args &args)
 	return ret;
 }
 
-void* hello(const Args &args)
-{
-	void *ret;
-	printf("hello ");
-	printf("world\n");
-	printf("\n");
-	return ret;
-}
-
 void *NARSESEPARSER::ext_image(const Args &args)
 {
 	void *ret;
-	ret = hello(args);
-	ret = NARSESEPARSER::multi_prefix(args);
-	// auto it = args.begin();
-	// auto &connector = *((Connector *)*it);
-	// std::list<pTerm> terms;
-
-	// for (it++; it != args.end(); it++)
-	// {
-	// 	terms.push_back(pTerm((Term *)*it));
-	// }
-	// auto &compound = *(new Compound(connector, terms));
-	// // Compound(connector, {(Term *)args[1], (Term *)args[1]});
-	// ret = &compound;
+	ret = multi_prefix(args);
 	return ret;
 }
 void *NARSESEPARSER::multi_prefix_product(const Args &args)
@@ -370,7 +382,10 @@ void *NARSESEPARSER::multi_prefix(const Args &args)
 	void *ret;
 	auto it = args.begin();
 	auto &connector = *((Connector *)*it);
-	std::list<pTerm> terms;
+	list<pTerm> terms;
+	// boost::container::list<int> terms2;
+	// auto it2 = terms2.begin();
+	// std::list<pTerm> terms;
 
 	for (it++; it != args.end(); it++)
 	{
@@ -385,7 +400,6 @@ void *NARSESEPARSER::single_prefix(const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[0]);
-	std::list<pTerm> terms;
 	auto &compound = *(new Compound(connector, {pTerm((Term *)args[1]), pTerm((Term *)args[2])}));
 	ret = &compound;
 	return ret;
@@ -394,7 +408,6 @@ void *NARSESEPARSER::single_infix(const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[1]);
-	std::list<pTerm> terms;
 	auto &compound = *(new Compound(connector, {pTerm((Term *)args[0]), pTerm((Term *)args[2])}));
 	ret = &compound;
 	return ret;
@@ -531,6 +544,9 @@ void *NARSESEPARSER::dependent_var(const Args &args)
 void *NARSESEPARSER::query_var(const Args &args)
 {
 	void *ret;
+	auto name = std::string((char *)args[0]);
+	auto var = Variable(VARIABLE::VarPrefix::Qeury, name);
+	
 	return ret;
 }
 void *NARSESEPARSER::tense_time(const Args &args)

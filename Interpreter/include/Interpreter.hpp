@@ -1,14 +1,14 @@
 #ifndef _INTERPRETER_H_
 #define _INTERPRETER_H_
 
-#include <map>
-#include <string>
+#include "Narsese/include/Compound.h"
+#include "Narsese/include/Statement.h"
 #include "Narsese/include/Task.h"
 #include "Narsese/include/Term.h"
-#include "Narsese/include/Statement.h"
-#include "Narsese/include/Compound.h"
 #include <iomanip>
+#include <map>
 #include <sstream>
+#include <string>
 
 namespace INTERPRETER
 {
@@ -22,21 +22,25 @@ namespace INTERPRETER
     {
     public:
         map<size_t, string> dictionary;
+        map<size_t, void*> objects;
         map<string, size_t> dictionary_inv;
         map<size_t, int> count;
 
-        inline void put(int key, string name) 
-        { 
+        inline void put(int key, string name, void* object)
+        {
             dictionary[key] = name;
+            objects[key] = object;
             dictionary_inv[name] = key;
             count[key] = (check_count(key) == 0) ? 1 : (count[key] + 1);
         }
 
         inline string &get(int key) { return dictionary[key]; }
-        inline int get_by_name(string name) { return dictionary_inv[name]; }
+        inline void* get_object(int key) { return objects[key]; }
+        inline int get_by_name(string &name) { return dictionary_inv[name]; }
         inline bool check(int key) { return dictionary.count(key) == 1; }
-        inline bool check_by_name(string name) { return dictionary_inv.count(name) == 1; }
-        inline int check_count(int key) { 
+        inline bool check_by_name(string &name) { return dictionary_inv.count(name) == 1; }
+        inline int check_count(int key)
+        {
             if (count.count(key) == 0)
             {
                 return 0;
@@ -52,7 +56,7 @@ namespace INTERPRETER
             }
         }
 
-        inline bool remove(int key) 
+        inline bool remove(int key)
         {
             if (check(key))
             {
@@ -87,7 +91,7 @@ namespace INTERPRETER
             }
         }
 
-        inline bool erase(int key) 
+        inline bool erase(int key)
         {
             if (check_count(key) > 0)
             {
@@ -108,7 +112,7 @@ namespace INTERPRETER
 
         string interpret(Task &task);
 
-        inline void colored(bool set=true)
+        inline void colored(bool set = true)
         {
             this->_is_colored = set;
         }

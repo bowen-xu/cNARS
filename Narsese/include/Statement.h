@@ -16,7 +16,6 @@ namespace STATEMENT
     using std::unordered_set;
     using TERM::pTerm;
     using TERM::Term;
-    using UTILS::hash_str;
 
     class Statement : public Term
     {
