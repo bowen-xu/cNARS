@@ -45,11 +45,11 @@ namespace CONNECTOR
     // extern const char *Repr[];
     // const char *Repr[] = {"&&", "||", "*", "&|", "&/", "|", "&", "-", "~", "--", "[", "{", "\\", "/", "#"};
 
-    extern bool _commutative[];
-    extern bool _single_only[];
-    extern bool _double_only[];
-    extern bool _multiple_only[];
-    extern bool _temporal[];
+    const bool _commutative[] = {true, true, false, true, false, true, true, false, false, false, true, true, false, false, false};
+    const bool _single_only[] = {false, false, false, false, false, false, false, false, false, true, false, false, false, false, false};
+    const bool _double_only[] = {false, false, false, false, false, false, false, true, true, false, false, false, false, false, false};
+    const bool _multiple_only[] = {true, true, true, true, true, true, true, true, true, false, false, false, true, true, false};
+    const bool _temporal[] = {false, false, false, true, true, false, false, false, false, false, false, false, false, false, false};
 
     // extern inline bool is_commutative(Connector connector);
     // extern inline bool is_single_only(Connector connector);

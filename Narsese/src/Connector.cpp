@@ -5,11 +5,11 @@ using namespace CONNECTOR;
 namespace CONNECTOR
 {
     
-    bool _commutative[] = {true, true, false, true, false, true, true, false, false, false, true, true, false, false, false};
-    bool _single_only[] = {false, false, false, false, false, false, false, false, false, true, false, false, false, false, false};
-    bool _double_only[] = {false, false, false, false, false, false, false, true, true, false, false, false, false, false, false};
-    bool _multiple_only[] = {true, true, true, true, true, true, true, true, true, false, false, false, true, true, false};
-    bool _temporal[] = {false, false, false, true, true, false, false, false, false, false, false, false, false, false, false};
+    // bool _commutative[] = {true, true, false, true, false, true, true, false, false, false, true, true, false, false, false};
+    // bool _single_only[] = {false, false, false, false, false, false, false, false, false, true, false, false, false, false, false};
+    // bool _double_only[] = {false, false, false, false, false, false, false, true, true, false, false, false, false, false, false};
+    // bool _multiple_only[] = {true, true, true, true, true, true, true, true, true, false, false, false, true, true, false};
+    // bool _temporal[] = {false, false, false, true, true, false, false, false, false, false, false, false, false, false, false};
 
     // inline bool is_commutative(Connector connector) { return _commutative[connector]; }
     // inline bool is_single_only(Connector connector) { return _single_only[connector]; }

@@ -2,6 +2,7 @@
 #define _TRUTH_H
 
 #include <memory>
+#include "Config.h"
 
 
 namespace TRUTH
@@ -13,7 +14,8 @@ namespace TRUTH
         float c;
         float k;
 
-        inline Truth(float f, float c, float k=1.0) : f(f), c(c), k(k) {};
+        Truth(float f, float c, float k=1.0) : f(f), c(c), k(k) {};
+        Truth(float k=1.0) : f(CONFIG::f), c(CONFIG::c), k(k) {};
 
         inline double e() const
         {

@@ -11,6 +11,9 @@
 #include <boost/algorithm/string.hpp>
 
 #include <algorithm>
+#include <boost/algorithm/string.hpp>
+#include <map>
+#include <unordered_map>
 
 using INTERPRETER::interpreter;
 using NARSESEPARSER::NarseseParser;
@@ -44,8 +47,8 @@ int test_parse_nal(int i)
                 std::string line;
                 while (std::getline(file, line))
                 {
-                    // std::cout << line << std::endl;
                     std::string input(line);
+                    boost::algorithm::trim(input);
                     if (isdigits(input))
                     {
                     }
@@ -58,7 +61,7 @@ int test_parse_nal(int i)
                         if (input.length() > 0)
                         {
                             auto task = parser->parse_task(input);
-                            auto str = interpreter.interpret(*task);
+                            auto str = interpreter.interpret(*task, true);
                             printf("%s\n", str.c_str());
                         }
                     }
@@ -71,7 +74,6 @@ int test_parse_nal(int i)
             }
         }
         globfree(&globbuf);
-        
     }
     else
     {
@@ -89,10 +91,12 @@ int test_parse_line(string line)
     try
     {
         auto task = parser->parse_task(line);
-        auto str = interpreter.interpret(*task);
+        // auto& term = task->term();
+        // std::cout << term << std::endl;;
+        auto str = interpreter.interpret(*task, true);
         printf("%s\n", str.c_str());
     }
-    catch(void*)
+    catch (void *)
     {
         delete parser;
         return 1;
@@ -121,8 +125,23 @@ int test_parse_line(string line)
 //     GTEST_ASSERT_EQ(test_parse_nal(4), 0);
 // }
 
+// TEST(test_parser, test_parse_nal5)
+// {
+//     GTEST_ASSERT_EQ(test_parse_nal(5), 0);
+// }
+
+// TEST(test_parser, test_parse_nal6)
+// {
+//     GTEST_ASSERT_EQ(test_parse_nal(6), 0);
+// }
+
+// TEST(test_parser, test_parse_nal7)
+// {
+//     GTEST_ASSERT_EQ(test_parse_nal(7), 0);
+// }
 
 TEST(test_parser, test_parse_line)
 {
-    GTEST_ASSERT_EQ(test_parse_line("<(*,bird,plant) --> ?x>? "), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"(<(&/,<(*, John, key_101) --> hold>,+100) =/> <(*, John, room_101) --> enter>>.)"), 0);
+    // GTEST_ASSERT_EQ(test_parse_line("<A =\\> B>. :\\: %1.0;0.9%"), 0);
 }

@@ -1,11 +1,11 @@
 #include "IndexVar.h"
 #include <memory>
 #include <unordered_map>
+#include <map>
+#include <set>
 #include <unordered_set>
 #include <vector>
 
-using std::unordered_map;
-using std::unordered_set;
 using std::vector;
 
 using namespace INDEXVAR;
@@ -14,10 +14,10 @@ using namespace INDEXVAR;
 
 std::shared_ptr<vector<int>> _normalize(const vector<int> &variables)
 {
-    std::unordered_set<int> p1(variables.begin(), variables.end());
+    std::set<int> p1(variables.begin(), variables.end());
     vector<int> p2(p1.begin(), p1.end());
 
-    std::unordered_map<int, int> mapping;
+    std::map<int, int> mapping;
     for (std::size_t i = 0; i < p2.size(); ++i)
     {
         mapping[p2[i]] = i;

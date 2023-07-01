@@ -18,6 +18,8 @@ namespace TASK
         pBudget budget;
         pSentence sentence;
         Task(pBudget _budget, pSentence _sentence) : budget(_budget), sentence(_sentence) {}
+
+        auto &term() { return *sentence->term; }
     };
 
     typedef std::shared_ptr<Task> pTask;

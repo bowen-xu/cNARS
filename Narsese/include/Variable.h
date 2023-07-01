@@ -15,15 +15,11 @@ namespace VARIABLE
         Qeury = 2
     };
 
-    extern string Repr[];
-
+    const string Repr[] = {string("$"), string("#"), string("?")};
 
     class Variable : public Term
     {
     public:
-        bool is_var = true;
-        bool has_var = true;
-
         string name;
         VarPrefix prefix;
 

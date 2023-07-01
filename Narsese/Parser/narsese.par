@@ -32,7 +32,7 @@ copula : "-->"  = inheritance                      // (* inheritance *)
         | "==>" = implication                      // (* implication *)
         | "=/>" = predictive_implication           // (* predictive implication *)
         | "=|>" = concurrent_implication           // (* concurrent implication *)
-        | "=\>" = retrospective_implication        // (* retrospective implication *)
+        | "=\\>" = retrospective_implication        // (* retrospective implication *)
         | "<=>" = equivalence                      // (* equivalence *)
         | "</>" = predictive_equivalence           // (* predictive equivalence *)
         | "<|>" = concurrent_equivalence           // (* concurrent equivalence *)
@@ -145,7 +145,7 @@ variable : "$" word     = independent_var               // (* independent variab
 tense   : ":!" @integer ":" = tense_time
         | ":/:"         = tense_future      // (* future event *)
         | ":|:"         = tense_present     // (* present event *)
-        | ":\:"         = tense_past        // (* past event *)
+        | ":\\:"         = tense_past        // (* past event *)
 ;
 
 desire : truth;                                                                 // (* same format, different interpretations *)

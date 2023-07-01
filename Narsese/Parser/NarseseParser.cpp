@@ -14,6 +14,7 @@
 #include <iostream>
 #include <memory>
 // #include <list>
+#include <tuple>
 #include <vector>
 // #include <boost/container/list.hpp>
 
@@ -30,9 +31,11 @@ using COPULA::Copula;
 using SENTENCE::Goal;
 using SENTENCE::Judgement;
 using SENTENCE::pSentence;
+using SENTENCE::pStamp;
 using SENTENCE::Quest;
 using SENTENCE::Question;
 using SENTENCE::Sentence;
+using SENTENCE::Stamp;
 using STATEMENT::Statement;
 using TASK::Task;
 using TERM::pTerm;
@@ -47,7 +50,7 @@ using namespace NARSESEPARSER;
 // extern INTERPRETER::Interpreter INTERPRETER::interpreter;
 
 /*definitions*/
-void *NARSESEPARSER::task(const Args &args)
+void *NARSESEPARSER::task(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
@@ -99,15 +102,44 @@ void *NARSESEPARSER::task(const Args &args)
 	return ret;
 }
 
-void *NARSESEPARSER::judgement(const Args &args)
+void *NARSESEPARSER::judgement(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
 	Term &term = *(Term *)args[0];
-	Truth *truth;
-	if (n_args >= 2)
+	Truth *truth = nullptr;
+	Stamp *stamp = nullptr;
+
+	for (auto it = args.begin() + 1; it != args.end(); it++)
 	{
-		truth = (Truth *)args[1];
+		auto &arg = *it;
+		void *ptr;
+		int mark;
+		std::tie(mark, ptr) = *(std::tuple<int, void *> *)arg;
+		delete (std::tuple<int, void *> *)arg;
+		if (mark == 0) // tense
+		{
+			auto time = *(signed int *)ptr;
+			delete (signed int *)ptr;
+			stamp = new Stamp(time, GLOBAL::time, -1, nullptr, false);
+		}
+		else if (mark == 1)
+		{
+			truth = (Truth *)ptr;
+		}
+	}
+
+	if (stamp == nullptr)
+	{
+		stamp = new Stamp(true);
+	}
+
+	if (truth == nullptr)
+	{
+		truth = new Truth(CONFIG::f, CONFIG::c, CONFIG::k);
+	}
+	else
+	{
 		if (truth->f < -0.5)
 			truth->f = CONFIG::f;
 		if (truth->c < -0.5)
@@ -115,34 +147,81 @@ void *NARSESEPARSER::judgement(const Args &args)
 		if (truth->k < -0.5)
 			truth->k = CONFIG::k;
 	}
-	else
-	{
-		truth = new Truth(CONFIG::f, CONFIG::c, CONFIG::k);
-	}
-	auto &judgement = *(new Judgement(pTerm(&term), pTruth(truth)));
+
+	auto &judgement = *(new Judgement(pTerm(&term), pTruth(truth), pStamp(stamp)));
 	ret = &judgement;
 	return ret;
 }
 
-void *NARSESEPARSER::question(const Args &args)
+void *NARSESEPARSER::question(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
 	Term &term = *(Term *)args[0];
+	Stamp *stamp;
+	for (auto it = args.begin() + 1; it != args.end(); it++)
+	{
+		auto &arg = *it;
+		void *ptr;
+		int mark;
 
-	auto &question = *(new Question(pTerm(&term)));
+		std::tie(mark, ptr) = *(std::tuple<int, void *> *)arg;
+		delete (std::tuple<int, void *> *)arg;
+		if (mark == 0) // tense
+		{
+			auto time = *(signed int *)ptr;
+			delete (signed int *)ptr;
+			stamp = new Stamp(time, GLOBAL::time, -1, nullptr, false);
+		}
+	}
+
+	if (stamp == nullptr)
+	{
+		stamp = new Stamp(true);
+	}
+
+	auto &question = *(new Question(pTerm(&term), pStamp(stamp)));
 	ret = &question;
 	return ret;
 }
 
-void *NARSESEPARSER::goal(const Args &args)
+void *NARSESEPARSER::goal(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
 	Term &term = *(Term *)args[0];
 	// Truth &desire = (n_args >= 2) ? *(Truth *)args[1] : *(new Truth(CONFIG::f, CONFIG::c, CONFIG::k));
-	Truth *desire;
-	if (n_args >= 2)
+	Truth *desire = nullptr;
+	Stamp *stamp = nullptr;
+	for (auto it = args.begin() + 1; it != args.end(); it++)
+	{
+		auto &arg = *it;
+		void *ptr;
+		int mark;
+		std::tie(mark, ptr) = *(std::tuple<int, void *> *)arg;
+		delete (std::tuple<int, void *> *)arg;
+		if (mark == 0) // tense
+		{
+			auto time = *(signed int *)ptr;
+			delete (signed int *)ptr;
+			stamp = new Stamp(time, GLOBAL::time, -1, nullptr, false);
+		}
+		else if (mark == 1)
+		{
+			desire = (Truth *)ptr;
+		}
+	}
+
+	if (stamp == nullptr)
+	{
+		stamp = new Stamp(true);
+	}
+
+	if (desire == nullptr)
+	{
+		desire = new Truth(CONFIG::f, CONFIG::c, CONFIG::k);
+	}
+	else
 	{
 		desire = (Truth *)args[1];
 		if (desire->f < -0.5)
@@ -152,28 +231,46 @@ void *NARSESEPARSER::goal(const Args &args)
 		if (desire->k < -0.5)
 			desire->k = CONFIG::k;
 	}
-	else
-	{
-		desire = new Truth(CONFIG::f, CONFIG::c, CONFIG::k);
-	}
 
-	auto &goal = *(new Goal(pTerm(&term), pTruth(desire)));
+	auto &goal = *(new Goal(pTerm(&term), pTruth(desire), pStamp(stamp)));
 	ret = &goal;
 	return ret;
 }
 
-void *NARSESEPARSER::quest(const Args &args)
+void *NARSESEPARSER::quest(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
 	Term &term = *(Term *)args[0];
 
-	auto &quest = *(new Quest(pTerm(&term)));
+	Stamp *stamp;
+	for (auto it = args.begin() + 1; it != args.end(); it++)
+	{
+		auto &arg = *it;
+		void *ptr;
+		int mark;
+
+		std::tie(mark, ptr) = *(std::tuple<int, void *> *)arg;
+		delete (std::tuple<int, void *> *)arg;
+		if (mark == 0) // tense
+		{
+			auto time = *(signed int *)ptr;
+			delete (signed int *)ptr;
+			stamp = new Stamp(time, GLOBAL::time, -1, nullptr, false);
+		}
+	}
+
+	if (stamp == nullptr)
+	{
+		stamp = new Stamp(true);
+	}
+
+	auto &quest = *(new Quest(pTerm(&term), pStamp(stamp)));
 	ret = &quest;
 	return ret;
 }
 
-void *NARSESEPARSER::statement(const Args &args)
+void *NARSESEPARSER::statement(Parser *self, const Args &args)
 {
 	void *ret;
 	Term &subject = *(Term *)args[0];
@@ -204,94 +301,96 @@ void *NARSESEPARSER::statement(const Args &args)
 	return ret;
 }
 
-void *NARSESEPARSER::statement_operation1(const Args &args)
+void *NARSESEPARSER::statement_operation1(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::statement_operation2(const Args &args)
+void *NARSESEPARSER::statement_operation2(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::inheritance(const Args &args)
+void *NARSESEPARSER::inheritance(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::INHERITANCE;
 	return ret;
 }
-void *NARSESEPARSER::similarity(const Args &args)
+void *NARSESEPARSER::similarity(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::SIMILARITY;
 	return ret;
 }
-void *NARSESEPARSER::instance(const Args &args)
+void *NARSESEPARSER::instance(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::INSTANCE;
 	return ret;
 }
-void *NARSESEPARSER::property(const Args &args)
+void *NARSESEPARSER::property(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::PROPERTY;
 	return ret;
 }
-void *NARSESEPARSER::instance_property(const Args &args)
+void *NARSESEPARSER::instance_property(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::INSTANCEPROPERTY;
 	return ret;
 }
-void *NARSESEPARSER::implication(const Args &args)
+void *NARSESEPARSER::implication(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::IMPLICATION;
 	return ret;
 }
-void *NARSESEPARSER::predictive_implication(const Args &args)
+void *NARSESEPARSER::predictive_implication(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::PREDICTIVEIMPLICATION;
 	return ret;
 }
-void *NARSESEPARSER::concurrent_implication(const Args &args)
+void *NARSESEPARSER::concurrent_implication(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::CONCURRENTIMPLICATION;
 	return ret;
 }
-void *NARSESEPARSER::retrospective_implication(const Args &args)
+void *NARSESEPARSER::retrospective_implication(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::RETROSPECTIVEIMPLICATION;
 	return ret;
 }
-void *NARSESEPARSER::equivalence(const Args &args)
+void *NARSESEPARSER::equivalence(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::EQUIVALENCE;
 	return ret;
 }
-void *NARSESEPARSER::predictive_equivalence(const Args &args)
+void *NARSESEPARSER::predictive_equivalence(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::PREDICTIVEEQUIVALENCE;
 	return ret;
 }
-void *NARSESEPARSER::concurrent_equivalence(const Args &args)
+void *NARSESEPARSER::concurrent_equivalence(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&COPULA::CONCURRENTEQUIVALENCE;
 	return ret;
 }
-void *NARSESEPARSER::variable_term(const Args &args)
+void *NARSESEPARSER::variable_term(Parser *self, const Args &args)
 {
 	void *ret;
+	auto &var = *((VARIABLE::Variable *)args[0]);
+	ret = &var;
 	return ret;
 }
-void *NARSESEPARSER::atom_term(const Args &args)
+void *NARSESEPARSER::atom_term(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &str = *((std::string *)args[0]);
@@ -299,43 +398,43 @@ void *NARSESEPARSER::atom_term(const Args &args)
 	if (INTERPRETER::interpreter.check_by_name(str) > 0)
 	{
 		auto key = INTERPRETER::interpreter.get_by_name(str);
-		term = (Term*)INTERPRETER::interpreter.get_object(key);
+		term = (Term *)INTERPRETER::interpreter.get_object(key);
 	}
 	else
 	{
 		term = (new Term());
-		INTERPRETER::interpreter.put(term->hash_value, str, (void*)term);
+		INTERPRETER::interpreter.put(term->hash_value, str, (void *)term);
 	}
 
 	delete &str;
 	ret = term;
 	return ret;
 }
-void *NARSESEPARSER::compound_term(const Args &args)
+void *NARSESEPARSER::compound_term(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &compound = *(Compound *)args[0];
 	ret = &compound;
 	return ret;
 }
-void *NARSESEPARSER::statement_term(const Args &args)
+void *NARSESEPARSER::statement_term(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &statement = *(Statement *)args[0];
 	ret = &statement;
 	return ret;
 }
-void *NARSESEPARSER::op(const Args &args)
+void *NARSESEPARSER::op(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::interval(const Args &args)
+void *NARSESEPARSER::interval(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::set(const Args &args)
+void *NARSESEPARSER::set(Parser *self, const Args &args)
 {
 	void *ret;
 	auto it = args.begin();
@@ -350,7 +449,7 @@ void *NARSESEPARSER::set(const Args &args)
 	ret = &compound;
 	return ret;
 }
-void *NARSESEPARSER::negation(const Args &args)
+void *NARSESEPARSER::negation(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[0]);
@@ -359,25 +458,25 @@ void *NARSESEPARSER::negation(const Args &args)
 	ret = &compound;
 	return ret;
 }
-void *NARSESEPARSER::int_image(const Args &args)
+void *NARSESEPARSER::int_image(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = multi_prefix(args);
+	ret = multi_prefix(self, args);
 	return ret;
 }
 
-void *NARSESEPARSER::ext_image(const Args &args)
+void *NARSESEPARSER::ext_image(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = multi_prefix(args);
+	ret = multi_prefix(self, args);
 	return ret;
 }
-void *NARSESEPARSER::multi_prefix_product(const Args &args)
+void *NARSESEPARSER::multi_prefix_product(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_prefix(const Args &args)
+void *NARSESEPARSER::multi_prefix(Parser *self, const Args &args)
 {
 	void *ret;
 	auto it = args.begin();
@@ -396,7 +495,7 @@ void *NARSESEPARSER::multi_prefix(const Args &args)
 	ret = &compound;
 	return ret;
 }
-void *NARSESEPARSER::single_prefix(const Args &args)
+void *NARSESEPARSER::single_prefix(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[0]);
@@ -404,7 +503,7 @@ void *NARSESEPARSER::single_prefix(const Args &args)
 	ret = &compound;
 	return ret;
 }
-void *NARSESEPARSER::single_infix(const Args &args)
+void *NARSESEPARSER::single_infix(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[1]);
@@ -412,164 +511,194 @@ void *NARSESEPARSER::single_infix(const Args &args)
 	ret = &compound;
 	return ret;
 }
-void *NARSESEPARSER::multi_prod_expr(const Args &args)
+void *NARSESEPARSER::multi_prod_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_disj_expr(const Args &args)
+void *NARSESEPARSER::multi_disj_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_conj_expr(const Args &args)
+void *NARSESEPARSER::multi_conj_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_sequential_expr(const Args &args)
+void *NARSESEPARSER::multi_sequential_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_parallel_expr(const Args &args)
+void *NARSESEPARSER::multi_parallel_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_intint_expr(const Args &args)
+void *NARSESEPARSER::multi_intint_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::multi_extint_expr(const Args &args)
+void *NARSESEPARSER::multi_extint_expr(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::con_conjunction(const Args &args)
+void *NARSESEPARSER::con_conjunction(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::CONJUNCTION;
 	return ret;
 }
-void *NARSESEPARSER::con_disjunction(const Args &args)
+void *NARSESEPARSER::con_disjunction(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::DISJUNCTION;
 	return ret;
 }
-void *NARSESEPARSER::con_parallel_events(const Args &args)
+void *NARSESEPARSER::con_parallel_events(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::PARALLEL_EVENTS;
 	return ret;
 }
-void *NARSESEPARSER::con_sequential_events(const Args &args)
+void *NARSESEPARSER::con_sequential_events(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::SEQUENTIAL_EVENTS;
 	return ret;
 }
-void *NARSESEPARSER::con_intensional_intersection(const Args &args)
+void *NARSESEPARSER::con_intensional_intersection(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::INTENSIONAL_INTERSECTION;
 	return ret;
 }
-void *NARSESEPARSER::con_extensional_intersection(const Args &args)
+void *NARSESEPARSER::con_extensional_intersection(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::EXTENSIONAL_INTERSECTION;
 	return ret;
 }
-void *NARSESEPARSER::con_extensional_difference(const Args &args)
+void *NARSESEPARSER::con_extensional_difference(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::EXTENSIONAL_DIFFERENCE;
 	return ret;
 }
-void *NARSESEPARSER::con_intensional_difference(const Args &args)
+void *NARSESEPARSER::con_intensional_difference(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::INTENSIONAL_DIFFERENCE;
 	return ret;
 }
-void *NARSESEPARSER::con_int_set(const Args &args)
+void *NARSESEPARSER::con_int_set(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::INTENSIONAL_SET;
 	return ret;
 }
-void *NARSESEPARSER::con_ext_set(const Args &args)
+void *NARSESEPARSER::con_ext_set(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::EXTENSIONAL_SET;
 	return ret;
 }
-void *NARSESEPARSER::con_negation(const Args &args)
+void *NARSESEPARSER::con_negation(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::NEGATION;
 	return ret;
 }
-void *NARSESEPARSER::con_int_image(const Args &args)
+void *NARSESEPARSER::con_int_image(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::INTENSIONAL_IMAGE;
 	return ret;
 }
-void *NARSESEPARSER::con_ext_image(const Args &args)
+void *NARSESEPARSER::con_ext_image(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::EXTENSIONAL_IMAGE;
 	return ret;
 }
-void *NARSESEPARSER::con_product(const Args &args)
+void *NARSESEPARSER::con_product(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = (void *)&CONNECTOR::PRODUCT;
 	return ret;
 }
-void *NARSESEPARSER::independent_var(const Args &args)
+void *NARSESEPARSER::independent_var(Parser *self, const Args &args)
 {
 	void *ret;
+	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Independent] + std::string((char *)args[0]);
+	auto &var = *(new Variable(VARIABLE::VarPrefix::Independent, name));
+	auto &names_map = self->names_ivar;
+	auto str = name.c_str();
+	if (names_map.count(str) == 0)
+		names_map[str] = names_map.size();
+	auto idx = names_map[name.c_str()];
+	var._vars_independent->add(idx, {});
+	ret = &var;
 	return ret;
 }
-void *NARSESEPARSER::dependent_var(const Args &args)
+void *NARSESEPARSER::dependent_var(Parser *self, const Args &args)
 {
 	void *ret;
+	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Dependent] + std::string((char *)args[0]);
+	auto &var = *(new Variable(VARIABLE::VarPrefix::Dependent, name));
+	auto &names_map = self->names_dvar;
+	auto str = name.c_str();
+	if (names_map.count(str) == 0)
+		names_map[str] = names_map.size();
+	auto idx = names_map[name.c_str()];
+	var._vars_dependent->add(idx, {});
+	ret = &var;
 	return ret;
 }
-void *NARSESEPARSER::query_var(const Args &args)
+void *NARSESEPARSER::query_var(Parser *self, const Args &args)
 {
 	void *ret;
-	auto name = std::string((char *)args[0]);
-	auto var = Variable(VARIABLE::VarPrefix::Qeury, name);
-	
+	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Qeury] + std::string((char *)args[0]);
+	auto &var = *(new Variable(VARIABLE::VarPrefix::Qeury, name));
+	auto &names_map = self->names_qvar;
+	auto str = name.c_str();
+	if (names_map.count(str) == 0)
+		names_map[str] = names_map.size();
+	auto idx = names_map[name.c_str()];
+	var._vars_query->add(idx, {});
+	ret = &var;
 	return ret;
 }
-void *NARSESEPARSER::tense_time(const Args &args)
+void *NARSESEPARSER::tense_time(Parser *self, const Args &args)
 {
 	void *ret;
+	double t = std::stod((char *)args[0]);
+	ret = new std::tuple(0, (new (signed int)(t)));
 	return ret;
 }
-void *NARSESEPARSER::tense_future(const Args &args)
+void *NARSESEPARSER::tense_future(Parser *self, const Args &args)
 {
 	void *ret;
+	ret = new std::tuple(0, (new (signed int)(CONFIG::temporal_duration)));
 	return ret;
 }
-void *NARSESEPARSER::tense_present(const Args &args)
+void *NARSESEPARSER::tense_present(Parser *self, const Args &args)
 {
 	void *ret;
+	ret = new std::tuple(0, (new (signed int)(0)));
+
 	return ret;
 }
-void *NARSESEPARSER::tense_past(const Args &args)
+void *NARSESEPARSER::tense_past(Parser *self, const Args &args)
 {
 	void *ret;
+	ret = new std::tuple(0, (new (signed int)(-CONFIG::temporal_duration)));
 	return ret;
 }
-void *NARSESEPARSER::truth(const Args &args)
+void *NARSESEPARSER::truth(Parser *self, const Args &args)
 {
 	void *ret;
 	double f, c, k;
@@ -579,10 +708,10 @@ void *NARSESEPARSER::truth(const Args &args)
 
 	// ret = (void *)value;
 	auto &truth = *(new Truth(f, c, k));
-	ret = &truth;
+	ret = new std::tuple(1, &truth);
 	return ret;
 }
-void *NARSESEPARSER::budget(const Args &args)
+void *NARSESEPARSER::budget(Parser *self, const Args &args)
 {
 	void *ret;
 	double p, d, q;
@@ -595,54 +724,54 @@ void *NARSESEPARSER::budget(const Args &args)
 	ret = &budget;
 	return ret;
 }
-void *NARSESEPARSER::string_raw(const Args &args)
+void *NARSESEPARSER::string_raw(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &str = *(new std::string((char *)args[0]));
 	ret = &str;
 	return ret;
 }
-void *NARSESEPARSER::string(const Args &args)
+void *NARSESEPARSER::string(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::quality(const Args &args)
-{
-	void *ret;
-	ret = args[0];
-	return ret;
-}
-void *NARSESEPARSER::durability(const Args &args)
+void *NARSESEPARSER::quality(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = args[0];
 	return ret;
 }
-void *NARSESEPARSER::priority(const Args &args)
+void *NARSESEPARSER::durability(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = args[0];
 	return ret;
 }
-void *NARSESEPARSER::k_evidence(const Args &args)
+void *NARSESEPARSER::priority(Parser *self, const Args &args)
+{
+	void *ret;
+	ret = args[0];
+	return ret;
+}
+void *NARSESEPARSER::k_evidence(Parser *self, const Args &args)
 {
 	void *ret;
 	return ret;
 }
-void *NARSESEPARSER::confidence(const Args &args)
+void *NARSESEPARSER::confidence(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = args[0]; // e.g., "0.90"
 	return ret;
 }
-void *NARSESEPARSER::frequency(const Args &args)
+void *NARSESEPARSER::frequency(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = args[0]; // e.g., "0.90"
 	return ret;
 }
-void *NARSESEPARSER::integer(const Args &args)
+void *NARSESEPARSER::integer(Parser *self, const Args &args)
 {
 	void *ret;
 	ret = args[0]; // e.g., 123

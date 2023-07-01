@@ -5,6 +5,9 @@
 #include "Narsese/include/Statement.h"
 #include "Narsese/include/Task.h"
 #include "Narsese/include/Term.h"
+#include "Narsese/include/Variable.h"
+#include "Narsese/include/Tense.h"
+
 #include <iomanip>
 #include <map>
 #include <sstream>
@@ -108,17 +111,17 @@ namespace INTERPRETER
             }
         }
 
-        string interpret(Term &term);
+        string interpret(Term &term, bool colored=false);
 
-        string interpret(Task &task);
+        string interpret(Task &task, bool colored=false);
 
-        inline void colored(bool set = true)
-        {
-            this->_is_colored = set;
-        }
+        // inline void colored(bool set = true)
+        // {
+        //     this->_is_colored = set;
+        // }
 
-    private:
-        bool _is_colored = true;
+    // private:
+    //     bool _is_colored = true;
     };
 
     extern Interpreter interpreter;

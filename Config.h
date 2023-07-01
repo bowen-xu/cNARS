@@ -18,7 +18,7 @@ namespace CONFIG
     extern float c; //=0.9
     extern float c_judgement; //=0.9
     extern float c_goal; // =0.9
-    extern unsigned int k; //=1
+    extern float k; //=1
     extern float p_judgement; //=0.8
     extern float d_judgement; //=0.5
     extern float p_question; //=0.9
@@ -63,6 +63,8 @@ namespace CONFIG
     extern unsigned int temporal_duration; // = 5
     extern unsigned int n_sequence_attempts; // = 10
     extern unsigned int n_op_condition_attempts; // = 10
+
+    extern unsigned int maximum_evidential_base_length;
 
 } // namespace CONFIG
 

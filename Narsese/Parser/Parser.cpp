@@ -92,7 +92,7 @@ Args* Parser::transform(_ast* node)
             {
                 auto token = Args(1);
                 token[0] = (void *)node->token;
-                ret = ((METHOD)fptr)(token);
+                ret = ((METHOD)fptr)(this, token);
             }
         }
         else
@@ -101,7 +101,7 @@ Args* Parser::transform(_ast* node)
             auto fptr = this->get_function(name);
             if (fptr != 0)
             {
-                ret = ((METHOD)fptr)(*ret_args);
+                ret = ((METHOD)fptr)(this, *ret_args);
             }
             if (ret_args != nullptr)
             {

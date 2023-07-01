@@ -17,8 +17,9 @@
 
 namespace PARSER
 {
+    class Parser;
     typedef std::vector<void *> Args;
-    typedef void *(*METHOD)(const std::vector<void *> &);
+    typedef void *(*METHOD)(Parser *self, const std::vector<void *> &);
 
     class Parser : public _parser
     {
@@ -27,10 +28,9 @@ namespace PARSER
         std::unordered_map<const char *, long> _map;
 
         /* variable mappings from name to index */
-        std::unordered_map<const char *, long> names_ivar;
-        std::unordered_map<const char *, long> names_dvar;
-        std::unordered_map<const char *, long> names_qvar;
-        
+        std::unordered_map<std::string, long> names_ivar;
+        std::unordered_map<std::string, long> names_dvar;
+        std::unordered_map<std::string, long> names_qvar;
 
         Parser();
 

@@ -39,11 +39,11 @@ namespace COPULA
 
     const string Repr[] = {string("-->"), string("<->"), string("{--"), string("--]"), string("{-]"), string("==>"), string("=/>"), string("=|>"), string("=\\>"), string("<=>"), string("</>"), string("<|>")};
 
-    // bool _commutative[] = {false, true, false, false, false,false, false, false, false, true, false, true};
-    // bool _higher_order[] = {false, false, false, false, false, true, true, true, true, true, true, true};
-    // bool _temporal[] = {false, false, false, false, false, false, true, true, true, false, true, true};
-    // bool _symmetrize[] = {Similarity, Similarity, None, None, None, Equivalence, PredictiveEquivalence, ConcurrentEquivalence, None, Equivalence, PredictiveEquivalence, ConcurrentEquivalence};
-    // bool _reverse[] = {None, None, None, None, None, None, RetrospectiveImplication, ConcurrentImplication, PredictiveImplication, None, None, ConcurrentEquivalence};
+    const bool _commutative[] = {false, true, false, false, false,false, false, false, false, true, false, true};
+    const bool _higher_order[] = {false, false, false, false, false, true, true, true, true, true, true, true};
+    const bool _temporal[] = {false, false, false, false, false, false, true, true, true, false, true, true};
+    const Copula _symmetrize[] = {Similarity, Similarity, None, None, None, Equivalence, PredictiveEquivalence, ConcurrentEquivalence, None, Equivalence, PredictiveEquivalence, ConcurrentEquivalence};
+    const Copula _reverse[] = {None, None, None, None, None, None, RetrospectiveImplication, ConcurrentImplication, PredictiveImplication, None, None, ConcurrentEquivalence};
 
     // extern inline bool is_commutative(Copula copula);
     // extern inline bool is_higher_order(Copula copula);
@@ -55,11 +55,11 @@ namespace COPULA
     // // inline static bool is_temporal(Copula copula) { return _temporal[copula]; }
     // // inline static bool symmetrize(Copula copula) { return _symmetrize[copula]; }
     // // inline static bool reverse(Copula copula) { return _reverse[copula]; }
-    // inline bool is_commutative(Copula copula) { return _commutative[copula]; }
-    // inline bool is_higher_order(Copula copula) { return _higher_order[copula]; }
-    // inline bool is_temporal(Copula copula) { return _temporal[copula]; }
-    // inline bool symmetrize(Copula copula) { return _symmetrize[copula]; }
-    // inline bool reverse(Copula copula) { return _reverse[copula]; }
+    inline bool is_commutative(Copula copula) { return _commutative[copula]; }
+    inline bool is_higher_order(Copula copula) { return _higher_order[copula]; }
+    inline bool is_temporal(Copula copula) { return _temporal[copula]; }
+    inline bool symmetrize(Copula copula) { return _symmetrize[copula]; }
+    inline bool reverse(Copula copula) { return _reverse[copula]; }
 } // namespace Copula
 
 

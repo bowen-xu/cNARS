@@ -51,7 +51,7 @@ namespace INDEXVAR
 
         std::shared_ptr<vector<int>> normalize();
         static void connect(pIndexVar father, pIndexVar successor, bool generate_pos = false);
-        void IndexVar::build(bool rebuild = false);
+        void build(bool rebuild = false);
         pInt add(int idx, const std::vector<int> &position);
         void remove(const std::vector<int> &position);
 

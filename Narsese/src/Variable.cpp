@@ -2,7 +2,7 @@
 
 namespace VARIABLE
 {
-    string _repr_prefix[] = {"$", "#", "?"};
+    // string _repr_prefix[] = {"$", "#", "?"};
 
     Variable::Variable(VarPrefix _prefix, string _name) : Term()
     {
@@ -10,9 +10,24 @@ namespace VARIABLE
         prefix = _prefix;
         name = _name;
 
-        is_ivar = prefix == VarPrefix::Independent;
-        is_dvar = prefix == VarPrefix::Dependent;
-        is_qvar = prefix == VarPrefix::Qeury;
+        if (prefix == VarPrefix::Independent)
+        {
+            is_ivar = true;
+            has_ivar = true;
+        }
+        else if (prefix == VarPrefix::Dependent)
+        {
+            is_dvar = true;
+            has_dvar = true;
+        }
+        else if (prefix == VarPrefix::Qeury)
+        {
+            is_qvar = true;
+            has_qvar = true;
+        }
+
+        is_var = true;
+        has_var = true;
     }
     
 } // namespace VARIABLE
