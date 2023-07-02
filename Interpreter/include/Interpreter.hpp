@@ -2,11 +2,11 @@
 #define _INTERPRETER_H_
 
 #include "Narsese/include/Compound.h"
+#include "Narsese/include/Interval.h"
 #include "Narsese/include/Statement.h"
 #include "Narsese/include/Task.h"
-#include "Narsese/include/Term.h"
-#include "Narsese/include/Variable.h"
 #include "Narsese/include/Tense.h"
+#include "Narsese/include/Variable.h"
 
 #include <iomanip>
 #include <map>
@@ -25,11 +25,11 @@ namespace INTERPRETER
     {
     public:
         map<size_t, string> dictionary;
-        map<size_t, void*> objects;
+        map<size_t, void *> objects;
         map<string, size_t> dictionary_inv;
         map<size_t, int> count;
 
-        inline void put(int key, string name, void* object)
+        inline void put(int key, string name, void *object)
         {
             dictionary[key] = name;
             objects[key] = object;
@@ -38,7 +38,7 @@ namespace INTERPRETER
         }
 
         inline string &get(int key) { return dictionary[key]; }
-        inline void* get_object(int key) { return objects[key]; }
+        inline void *get_object(int key) { return objects[key]; }
         inline int get_by_name(string &name) { return dictionary_inv[name]; }
         inline bool check(int key) { return dictionary.count(key) == 1; }
         inline bool check_by_name(string &name) { return dictionary_inv.count(name) == 1; }
@@ -111,17 +111,17 @@ namespace INTERPRETER
             }
         }
 
-        string interpret(Term &term, bool colored=false);
+        string interpret(Term &term, bool colored = false);
 
-        string interpret(Task &task, bool colored=false);
+        string interpret(Task &task, bool colored = false);
 
         // inline void colored(bool set = true)
         // {
         //     this->_is_colored = set;
         // }
 
-    // private:
-    //     bool _is_colored = true;
+        // private:
+        //     bool _is_colored = true;
     };
 
     extern Interpreter interpreter;

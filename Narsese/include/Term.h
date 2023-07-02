@@ -5,12 +5,11 @@
 #include "../utils/hash.h"
 #include "Connector.h"
 #include "Copula.h"
+#include <algorithm>
+#include <array>
 #include <memory>
 #include <string>
 #include <unordered_set>
-#include <algorithm>
-#include <array>
-
 
 // #include "../utils/repr.h"
 
@@ -23,6 +22,7 @@ namespace TERM
     using INDEXVAR::pIndexVar;
     using std::string;
     using std::unordered_set;
+    using UTILS::Hash;
 
     class Term;
     typedef std::shared_ptr<Term> pTerm;
@@ -31,7 +31,9 @@ namespace TERM
     {
         ATOM = 0,
         STATEMENT = 1,
-        COMPOUND = 2
+        COMPOUND = 2,
+        INTERVAL = -1,
+        OPERATION = -2
     };
 
     class Term
@@ -41,18 +43,14 @@ namespace TERM
         Copula copula = COPULA::None;
         Connector connector = CONNECTOR::None;
 
-        // bool has_var = false; // Whether the term contains variable(s).
-        // bool has_ivar = false; // Whether the term contains independent variable(s).
-        // bool has_dvar = false; // Whether the term contains dependent variable(s).
-        // bool has_qvar = false; // Whether the term contains query variable(s).
         bool is_var : 1 = false;
         bool is_ivar : 1 = false;
         bool is_dvar : 1 = false;
         bool is_qvar : 1 = false;
-        bool has_var : 1 = false;
-        bool has_ivar : 1 = false;
-        bool has_dvar : 1 = false;
-        bool has_qvar : 1 = false;
+        bool has_var : 1 = false;  // Whether the term contains variable(s).
+        bool has_ivar : 1 = false; // Whether the term contains independent variable(s).
+        bool has_dvar : 1 = false; // Whether the term contains dependent variable(s).
+        bool has_qvar : 1 = false; // Whether the term contains query variable(s).
 
         bool is_closed : 1 = true; // Whether the term is closed or open in terms of variable.
         bool is_interval : 1 = false;
@@ -72,7 +70,7 @@ namespace TERM
         // Term(int hash_value);
         // Term(char *_word);
         // string word;
-        Term() : hash_value((size_t)this){};
+        Term() : hash_value(Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this})){};
         // Term(std::string _word) : word(_word) {}
 
         // bool __eq__(Term o)
@@ -91,14 +89,9 @@ namespace TERM
             return this->hash_value;
         }
 
-    friend std::ostream& operator<<(std::ostream& os, const Term& obj) {
-        os << "Term";
-        return os;
-    }
-
-    std::string ToString() const {
-        return "term";
-    }
+        inline bool is_atom() { return this->type == TermType::ATOM; }
+        inline bool is_statement() { return this->type == TermType::STATEMENT; }
+        inline bool is_compound() { return this->type == TermType::COMPOUND; }
 
     protected:
         template <typename _Container>
@@ -114,14 +107,15 @@ namespace TERM
                                          { return term->has_qvar; });
         }
 
-        void _init_indexvars(const std::array<pIndexVar, 3> &variables, const std::vector<pTerm>& terms)
+        void _init_indexvars(const std::array<pIndexVar, 3> &variables, const std::vector<pTerm> &terms)
         {
-            
+
             for (auto &term : terms)
             {
                 auto indexvars2 = term->_index_vars();
                 auto it = indexvars2.begin();
-                for (const auto indexvar1 : variables) {
+                for (const auto indexvar1 : variables)
+                {
                     auto indexvar2 = *it;
                     IndexVar::connect(indexvar1, indexvar2, false);
                 }
@@ -148,7 +142,6 @@ namespace TERM
         {
             return {this->_vars_independent, this->_vars_dependent, this->_vars_query};
         }
-    
     };
 
 } // namespace Term

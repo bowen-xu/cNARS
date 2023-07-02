@@ -33,7 +33,7 @@ namespace COMPOUND
     class Compound : public Term
     {
     public:
-        string word_sorted;
+        // string word_sorted;
         pTerms terms;
         bool _is_commutative : 1 = false;
 

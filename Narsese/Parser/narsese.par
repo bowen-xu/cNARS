@@ -50,7 +50,7 @@ term_nonvar:
         | op
 ;
 
-op          : "^" word      = op;
+op          : "^" word      = operation;
 interval    : "+" @integer  = interval;
 
 compound_term : set
@@ -163,5 +163,5 @@ word : (@string | @string_raw);
 
 @string         '\"' (!'\\"' ('\\' '\\"')?)* '"'    = string;
 
-@string_raw     !'-+<>="&|!.?@~%;,:/\\*#$[]{}() '+  = string_raw;
+@string_raw     !'-+<>="&|!.?@~%;,:/\\*#$[]{}()\^ '+  = string_raw;
 @integer        '-'? '0-9'+                         = integer;

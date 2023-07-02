@@ -24,6 +24,9 @@ Statement::Statement(pTerm _subject, Copula _copula, pTerm _predicate) : subject
     this->is_higher_order = COPULA::is_higher_order(copula);
     this->is_operation = _predicate->is_operation;
 
+    if (this->predicate->is_atom() && this->predicate->is_operation && this->subject->is_compound() && this->subject->connector == CONNECTOR::PRODUCT)
+        this->is_operation = true;
+
     // is_operation = predicate.is_operation;
     auto terms = {this->subject, this->predicate};
     this->_refresh_var_status(terms);

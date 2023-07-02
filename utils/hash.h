@@ -31,7 +31,8 @@ namespace UTILS
             return hash_container(vec);
         }
 
-        size_t operator()(const std::initializer_list<size_t> &vec) const
+        template <typename _T>
+        size_t operator()(const std::initializer_list<_T> &vec) const
         {
             return hash_container(vec);
         }

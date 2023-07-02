@@ -28,7 +28,7 @@ bool isdigits(const std::string &str)
     return std::all_of(str.begin(), str.end(), ::isdigit);
 }
 
-int test_parse_nal(int i)
+int test_parse_nal(int i, bool colored=true)
 {
     NarseseParser *parser = new NarseseParser;
 
@@ -61,7 +61,7 @@ int test_parse_nal(int i)
                         if (input.length() > 0)
                         {
                             auto task = parser->parse_task(input);
-                            auto str = interpreter.interpret(*task, true);
+                            auto str = interpreter.interpret(*task, colored);
                             printf("%s\n", str.c_str());
                         }
                     }
@@ -85,7 +85,7 @@ int test_parse_nal(int i)
     return 0;
 }
 
-int test_parse_line(string line)
+int test_parse_line(string line, bool colored=true)
 {
     NarseseParser *parser = new NarseseParser;
     try
@@ -93,8 +93,16 @@ int test_parse_line(string line)
         auto task = parser->parse_task(line);
         // auto& term = task->term();
         // std::cout << term << std::endl;;
-        auto str = interpreter.interpret(*task, true);
-        printf("%s\n", str.c_str());
+        if (task != nullptr)
+        {
+            auto str = interpreter.interpret(*task, colored);
+            printf("%s\n", str.c_str());
+        }
+        else
+        {
+            printf("Parse failed.\n");
+
+        }
     }
     catch (void *)
     {
@@ -140,8 +148,13 @@ int test_parse_line(string line)
 //     GTEST_ASSERT_EQ(test_parse_nal(7), 0);
 // }
 
-TEST(test_parser, test_parse_line)
+TEST(test_parser, test_parse_nal8)
 {
-    GTEST_ASSERT_EQ(test_parse_line(R"(<(&/,<(*, John, key_101) --> hold>,+100) =/> <(*, John, room_101) --> enter>>.)"), 0);
-    // GTEST_ASSERT_EQ(test_parse_line("<A =\\> B>. :\\: %1.0;0.9%"), 0);
+    GTEST_ASSERT_EQ(test_parse_nal(8), 0);
 }
+
+
+// TEST(test_parser, test_parse_line)
+// {
+//     GTEST_ASSERT_EQ(test_parse_line("(^open,t001)!"), 0);
+// }

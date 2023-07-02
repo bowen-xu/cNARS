@@ -39,7 +39,7 @@ namespace NARSESEPARSER
 	extern void* atom_term(Parser* self, const Args &args);
 	extern void* compound_term(Parser* self, const Args &args);
 	extern void* statement_term(Parser* self, const Args &args);
-	extern void* op(Parser* self, const Args &args);
+	extern void* operation(Parser* self, const Args &args);
 	extern void* interval(Parser* self, const Args &args);
 	extern void* set(Parser* self, const Args &args);
 	extern void* negation(Parser* self, const Args &args);

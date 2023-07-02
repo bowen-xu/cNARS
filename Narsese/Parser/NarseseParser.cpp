@@ -4,6 +4,8 @@
 #include "Narsese/include/Budget.h"
 #include "Narsese/include/Compound.h"
 #include "Narsese/include/Copula.h"
+#include "Narsese/include/Interval.h"
+#include "Narsese/include/Operation.h"
 #include "Narsese/include/Sentence.h"
 #include "Narsese/include/Statement.h"
 #include "Narsese/include/Task.h"
@@ -28,6 +30,10 @@ using BUDGET::pBudget;
 using COMPOUND::Compound;
 using COMPOUND::Connector;
 using COPULA::Copula;
+using INTERVAL::Interval;
+using INTERVAL::pInterval;
+using OPERATION::Operation;
+using OPERATION::pOperation;
 using SENTENCE::Goal;
 using SENTENCE::Judgement;
 using SENTENCE::pSentence;
@@ -223,7 +229,6 @@ void *NARSESEPARSER::goal(Parser *self, const Args &args)
 	}
 	else
 	{
-		desire = (Truth *)args[1];
 		if (desire->f < -0.5)
 			desire->f = CONFIG::f;
 		if (desire->c < -0.5)
@@ -304,6 +309,16 @@ void *NARSESEPARSER::statement(Parser *self, const Args &args)
 void *NARSESEPARSER::statement_operation1(Parser *self, const Args &args)
 {
 	void *ret;
+	// void *term_op = *args.begin();
+	std::vector<pTerm> terms;
+	for (auto it = args.begin() + 1; it != args.end(); it++)
+	{
+		auto &arg = (*it);
+		auto term = pTerm((Term *)arg);
+		terms.push_back(term);
+	}
+	auto &stat = *(new Statement(pTerm(new Compound(CONNECTOR::PRODUCT, terms)), COPULA::INHERITANCE, pTerm((Operation *)args[0])));
+	ret = &stat;
 	return ret;
 }
 void *NARSESEPARSER::statement_operation2(Parser *self, const Args &args)
@@ -424,14 +439,33 @@ void *NARSESEPARSER::statement_term(Parser *self, const Args &args)
 	ret = &statement;
 	return ret;
 }
-void *NARSESEPARSER::op(Parser *self, const Args &args)
+void *NARSESEPARSER::operation(Parser *self, const Args &args)
 {
 	void *ret;
+	auto &str = *((std::string *)args[0]);
+	auto str_op = "^" + str;
+	Operation *term;
+	if (INTERPRETER::interpreter.check_by_name(str) > 0)
+	{
+		auto key = INTERPRETER::interpreter.get_by_name(str_op);
+		term = (Operation *)INTERPRETER::interpreter.get_object(key);
+	}
+	else
+	{
+		term = (new Operation());
+		INTERPRETER::interpreter.put(term->hash_value, str_op, (void *)term);
+	}
+
+	delete &str;
+	ret = term;
 	return ret;
 }
 void *NARSESEPARSER::interval(Parser *self, const Args &args)
 {
 	void *ret;
+	double dt = std::stod((char *)args[0]);
+	auto &interval = *(new Interval((signed int)dt));
+	ret = &interval;
 	return ret;
 }
 void *NARSESEPARSER::set(Parser *self, const Args &args)
@@ -474,6 +508,9 @@ void *NARSESEPARSER::ext_image(Parser *self, const Args &args)
 void *NARSESEPARSER::multi_prefix_product(Parser *self, const Args &args)
 {
 	void *ret;
+	Args args2 = {(void *)&CONNECTOR::PRODUCT};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::multi_prefix(Parser *self, const Args &args)
@@ -734,6 +771,8 @@ void *NARSESEPARSER::string_raw(Parser *self, const Args &args)
 void *NARSESEPARSER::string(Parser *self, const Args &args)
 {
 	void *ret;
+	auto &str = *(new std::string((char *)args[0]));
+	ret = &str;
 	return ret;
 }
 void *NARSESEPARSER::quality(Parser *self, const Args &args)
@@ -805,7 +844,7 @@ NarseseParser::NarseseParser() : Parser()
 	regist("atom_term", atom_term);
 	regist("compound_term", compound_term);
 	regist("statement_term", statement_term);
-	regist("op", op);
+	regist("operation", operation);
 	regist("interval", interval);
 	regist("set", set);
 	regist("negation", negation);
