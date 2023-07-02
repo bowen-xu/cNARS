@@ -148,13 +148,18 @@ int test_parse_line(string line, bool colored=true)
 //     GTEST_ASSERT_EQ(test_parse_nal(7), 0);
 // }
 
-TEST(test_parser, test_parse_nal8)
+// TEST(test_parser, test_parse_nal8)
+// {
+//     GTEST_ASSERT_EQ(test_parse_nal(8), 0);
+// }
+
+TEST(test_parser, test_parse_nal9)
 {
-    GTEST_ASSERT_EQ(test_parse_nal(8), 0);
+    GTEST_ASSERT_EQ(test_parse_nal(9), 0);
 }
 
 
 // TEST(test_parser, test_parse_line)
 // {
-//     GTEST_ASSERT_EQ(test_parse_line("(^open,t001)!"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line("<a --> b>?"), 0);
 // }

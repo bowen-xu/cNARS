@@ -164,7 +164,7 @@ void *NARSESEPARSER::question(Parser *self, const Args &args)
 	void *ret;
 	auto n_args = args.size();
 	Term &term = *(Term *)args[0];
-	Stamp *stamp;
+	Stamp *stamp = nullptr;
 	for (auto it = args.begin() + 1; it != args.end(); it++)
 	{
 		auto &arg = *it;
@@ -248,7 +248,7 @@ void *NARSESEPARSER::quest(Parser *self, const Args &args)
 	auto n_args = args.size();
 	Term &term = *(Term *)args[0];
 
-	Stamp *stamp;
+	Stamp *stamp = nullptr;
 	for (auto it = args.begin() + 1; it != args.end(); it++)
 	{
 		auto &arg = *it;
