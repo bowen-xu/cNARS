@@ -2,7 +2,6 @@
 #define _COMPOUND_H
 #include "./Connector.h"
 #include "./Term.h"
-#include "./Terms.h"
 #include <string>
 // #include <list>
 #include "Config.h"
@@ -26,8 +25,8 @@ namespace COMPOUND
     using TERM::pTerm;
     using TERM::Term;
     using TERM::TermType;
-    using TERMS::pTerms;
-    using TERMS::Terms;
+    using TERM::pTerms;
+    using TERM::Terms;
     using UTILS::Hash;
 
     class Compound : public Term

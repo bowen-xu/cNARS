@@ -28,6 +28,7 @@ namespace TERM
     class Terms;
     class Term;
     typedef std::shared_ptr<Term> pTerm;
+    typedef std::shared_ptr<Terms> pTerms;
 
     enum TermType
     {
@@ -114,7 +115,7 @@ namespace TERM
                                          { return term->has_qvar; });
         }
 
-        void _init_indexvars(const std::array<pIndexVar, 3> &variables, Terms *terms);
+        void _init_indexvars(const std::array<pIndexVar, 3> &variables, const Terms &terms);
 
         void _init_indexvars(const std::array<pIndexVar, 3> &variables, std::initializer_list<pTerm> terms)
         {
@@ -310,8 +311,10 @@ namespace TERM
                 }
             }
     };
-    typedef std::shared_ptr<Terms> pTerms;
+    
+
 
 } // namespace Term
+#include "./Term.inl"
 
 #endif // _TERM_H

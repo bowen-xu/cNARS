@@ -26,7 +26,7 @@ TEST(test_terms, test_terms0)
 {
     using TERM::pTerm;
     using TERM::Term;
-    using TERMS::Terms;
+    using TERM::Terms;
     std::vector<pTerm> terms_vec{Term::create(), Term::create()};
     Terms terms((std::vector<pTerm> &)terms_vec, true);
     for (auto it = terms.begin(); it != terms.end(); it++)
