@@ -324,6 +324,10 @@ void *NARSESEPARSER::statement_operation1(Parser *self, const Args &args)
 void *NARSESEPARSER::statement_operation2(Parser *self, const Args &args)
 {
 	void *ret;
+	auto term_op = NARSESEPARSER::operation(self, {args[0]});
+	Args args2 = {term_op};
+	args2.insert(args2.end(), args.begin() + 1, args.end());
+	ret = NARSESEPARSER::statement_operation1(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::inheritance(Parser *self, const Args &args)
@@ -505,6 +509,12 @@ void *NARSESEPARSER::ext_image(Parser *self, const Args &args)
 	ret = multi_prefix(self, args);
 	return ret;
 }
+void *NARSESEPARSER::multi_infix(Parser *self, const Args &args)
+{
+	void *ret;
+	ret = args[0];
+	return ret;
+}
 void *NARSESEPARSER::multi_prefix_product(Parser *self, const Args &args)
 {
 	void *ret;
@@ -551,36 +561,61 @@ void *NARSESEPARSER::single_infix(Parser *self, const Args &args)
 void *NARSESEPARSER::multi_prod_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	ret = NARSESEPARSER::multi_prefix_product(self, args);
 	return ret;
 }
 void *NARSESEPARSER::multi_disj_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	auto connector = (void *)&CONNECTOR::DISJUNCTION;
+	Args args2{connector};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = NARSESEPARSER::multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::multi_conj_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	auto connector = (void *)&CONNECTOR::CONJUNCTION;
+	Args args2{connector};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = NARSESEPARSER::multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::multi_sequential_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	auto connector = (void *)&CONNECTOR::SEQUENTIAL_EVENTS;
+	Args args2{connector};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = NARSESEPARSER::multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::multi_parallel_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	auto connector = (void *)&CONNECTOR::PARALLEL_EVENTS;
+	Args args2{connector};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = NARSESEPARSER::multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::multi_intint_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	auto connector = (void *)&CONNECTOR::INTENSIONAL_INTERSECTION;
+	Args args2{connector};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = NARSESEPARSER::multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::multi_extint_expr(Parser *self, const Args &args)
 {
 	void *ret;
+	auto connector = (void *)&CONNECTOR::EXTENSIONAL_INTERSECTION;
+	Args args2{connector};
+	args2.insert(args2.end(), args.begin(), args.end());
+	ret = NARSESEPARSER::multi_prefix(self, args2);
 	return ret;
 }
 void *NARSESEPARSER::con_conjunction(Parser *self, const Args &args)
@@ -796,6 +831,7 @@ void *NARSESEPARSER::priority(Parser *self, const Args &args)
 void *NARSESEPARSER::k_evidence(Parser *self, const Args &args)
 {
 	void *ret;
+	ret = args[0]; // e.g., "1"
 	return ret;
 }
 void *NARSESEPARSER::confidence(Parser *self, const Args &args)
@@ -850,6 +886,7 @@ NarseseParser::NarseseParser() : Parser()
 	regist("negation", negation);
 	regist("int_image", int_image);
 	regist("ext_image", ext_image);
+	regist("multi_infix", multi_infix);
 	regist("multi_prefix_product", multi_prefix_product);
 	regist("multi_prefix", multi_prefix);
 	regist("single_prefix", single_prefix);

@@ -79,7 +79,7 @@ negation  : (
 int_image : "(" con_int_image "," term ("," term)* ")"  = int_image;            // (* intensional image *)
 ext_image : "(" con_ext_image "," term ("," term)* ")"  = ext_image;            // (* extensional image *)
 
-multi : "(" multi_infix_expr ")"                                                // (* with infix operator *)
+multi : "(" multi_infix_expr ")"                        = multi_infix           // (* with infix operator *)
         | "(" term ("," term)+ ")"                      = multi_prefix_product  // (* product, new notation *)
         | ("(" con_multi "," term ("," term)+ ")"                               // (* with prefix operator *)
         | "(" con_product "," term ("," term)* ")")     = multi_prefix          // (* with prefix operator *)
@@ -98,20 +98,12 @@ multi_infix_expr : multi_extint_expr
         | multi_prod_expr
 ;
 
-// precedence:
-//  "&" > "|" > "&|" > "&/" >  "&&" > "||" > "*"
-multi_prod_expr : term6 ("*" term6)+        = multi_prod_expr;
-term6 : (term5|multi_disj_expr);
-multi_disj_expr: term5 ("||" term5)+        = multi_disj_expr;
-term5 : (term4|multi_conj_expr);
-multi_conj_expr: term4 ("&&" term4)+        = multi_conj_expr;
-term4 : (term3|multi_sequential_expr);
-multi_sequential_expr: term3 ("&/" term3)+  = multi_sequential_expr;
-term3 : (term2|multi_parallel_expr);
-multi_parallel_expr: term2 ("&|" term2)+    = multi_parallel_expr;
-term2 : (term1|multi_intint_expr);
-multi_intint_expr : term1 ("|" term1)+      = multi_intint_expr;
-term1 : (term|multi_extint_expr);
+multi_prod_expr : term ("*" term)+      = multi_prod_expr;
+multi_disj_expr: term ("||" term)+        = multi_disj_expr;
+multi_conj_expr: term ("&&" term)+        = multi_conj_expr;
+multi_sequential_expr: term ("&/" term)+  = multi_sequential_expr;
+multi_parallel_expr: term ("&|" term)+    = multi_parallel_expr;
+multi_intint_expr : term ("|" term)+      = multi_intint_expr;
 multi_extint_expr : term ("&" term)+        = multi_extint_expr;
 
 con_multi : "&&"        = con_conjunction               // (* conjunction *)

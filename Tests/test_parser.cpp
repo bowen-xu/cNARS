@@ -101,7 +101,6 @@ int test_parse_line(string line, bool colored=true)
         else
         {
             printf("Parse failed.\n");
-
         }
     }
     catch (void *)
@@ -153,13 +152,24 @@ int test_parse_line(string line, bool colored=true)
 //     GTEST_ASSERT_EQ(test_parse_nal(8), 0);
 // }
 
-TEST(test_parser, test_parse_nal9)
-{
-    GTEST_ASSERT_EQ(test_parse_nal(9), 0);
-}
-
-
-// TEST(test_parser, test_parse_line)
+// TEST(test_parser, test_parse_nal9)
 // {
-//     GTEST_ASSERT_EQ(test_parse_line("<a --> b>?"), 0);
+//     GTEST_ASSERT_EQ(test_parse_nal(9), 0);
 // }
+
+
+TEST(test_parser, test_parse_line)
+{
+    // GTEST_ASSERT_EQ(test_parse_line("<robin{-]bird>."), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a & b).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a | b).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a &| b).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a &/ b).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a && b).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a || b).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"((a * b).)"), 0);
+
+    GTEST_ASSERT_EQ(test_parse_line(R"((a * b * c).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"(((h && a) * b * f * (g || (c & d & e))).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line(R"(((h && (a * b * f * g)) || (c & d & e)).)"), 0);
+}

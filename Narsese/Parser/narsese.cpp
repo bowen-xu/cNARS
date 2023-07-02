@@ -348,7 +348,7 @@ void _parser::clear_input( void )
 #endif
 }
 
-#if 80
+#if 70
 void _parser::lex( void )
 {
 	int 		state	= 0;

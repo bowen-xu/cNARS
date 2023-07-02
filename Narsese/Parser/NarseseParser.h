@@ -45,7 +45,8 @@ namespace NARSESEPARSER
 	extern void* negation(Parser* self, const Args &args);
 	extern void* int_image(Parser* self, const Args &args);
 	extern void* ext_image(Parser* self, const Args &args);
-	extern void* multi_prefix_product(Parser* self, const Args &args);
+	extern void* multi_infix(Parser *self, const Args &args);
+	extern void* multi_prefix_product(Parser *self, const Args &args);
 	extern void* multi_prefix(Parser* self, const Args &args);
 	extern void* single_prefix(Parser* self, const Args &args);
 	extern void* single_infix(Parser* self, const Args &args);
