@@ -477,7 +477,7 @@ void *NARSESEPARSER::set(Parser *self, const Args &args)
 	void *ret;
 	auto it = args.begin();
 	auto &connector = *((Connector *)*it);
-	list<pTerm> terms;
+	std::list<pTerm> terms;
 
 	for (it++; it != args.end(); it++)
 	{
@@ -528,7 +528,7 @@ void *NARSESEPARSER::multi_prefix(Parser *self, const Args &args)
 	void *ret;
 	auto it = args.begin();
 	auto &connector = *((Connector *)*it);
-	list<pTerm> terms;
+	std::list<pTerm> terms;
 	// boost::container::list<int> terms2;
 	// auto it2 = terms2.begin();
 	// std::list<pTerm> terms;

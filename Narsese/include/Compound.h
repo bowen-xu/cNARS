@@ -37,10 +37,10 @@ namespace COMPOUND
         pTerms terms;
         bool _is_commutative : 1 = false;
 
-        inline auto &components() { return terms->terms; }
+        inline auto &components() { return *terms; }
 
         Compound(Connector connector, pTerms terms);
-        Compound(Connector connector, list<pTerm> &terms);
+        Compound(Connector connector, std::list<pTerm> &terms);
         Compound(Connector connector, std::vector<pTerm> &terms);
         // Compound(Connector connector, std::initializer_list<Term&> terms);
         Compound(Connector connector, std::initializer_list<pTerm> terms);
@@ -60,7 +60,7 @@ namespace COMPOUND
         {
             std::vector<size_t> values;
             values.push_back((size_t)connector);
-            for (auto it : terms->terms)
+            for (auto it : *terms)
             {
                 values.push_back((*it).hash_value);
             }
