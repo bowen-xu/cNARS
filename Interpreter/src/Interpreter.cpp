@@ -75,7 +75,7 @@ string Interpreter::interpret(Term &term, bool colored)
     }
     /* Otherwise, it has not been interpreted yet. Then interpret and store it.
      If the term is atomic, add the term into the dictionary. */
-    auto append_strs = [this, colored](std::stringstream &_ss, TERM::Terms &components)
+    auto append_strs = [this, colored](std::stringstream &_ss, const TERM::Terms &components)
     {
         for (auto it = components.begin(); it != components.end(); ++it)
         {

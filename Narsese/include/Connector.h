@@ -21,7 +21,7 @@ namespace CONNECTOR
         Negation = 9,                   // "--"
         IntensionalSet = 10,            // "["
         ExtensionalSet = 11,            // "{"
-        IntensionalImage = 12,          // "\\"
+        IntensionalImage = 12,          // "\"
         ExtensionalImage = 13,          // "/"
         List =14                        // "#"
     };
@@ -45,6 +45,7 @@ namespace CONNECTOR
     // extern const char *Repr[];
     // const char *Repr[] = {"&&", "||", "*", "&|", "&/", "|", "&", "-", "~", "--", "[", "{", "\\", "/", "#"};
 
+    const bool _reducible[] = {true, true, false, true, true, true, true, false, false, false, true, true, false, false, false};
     const bool _commutative[] = {true, true, false, true, false, true, true, false, false, false, true, true, false, false, false};
     const bool _single_only[] = {false, false, false, false, false, false, false, false, false, true, false, false, false, false, false};
     const bool _double_only[] = {false, false, false, false, false, false, false, true, true, false, false, false, false, false, false};
@@ -70,6 +71,7 @@ namespace CONNECTOR
     //         (len_terms > 0);
     // }
     inline bool is_commutative(Connector connector) { return _commutative[connector]; }
+    inline bool is_reducible(Connector connector) { return _reducible[connector]; }
     inline bool is_single_only(Connector connector) { return _single_only[connector]; }
     inline bool is_double_only(Connector connector) { return _double_only[connector]; }
     inline bool is_multiple_only(Connector connector) { return _multiple_only[connector]; }

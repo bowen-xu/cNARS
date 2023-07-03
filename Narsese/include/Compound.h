@@ -34,9 +34,9 @@ namespace COMPOUND
     public:
         // string word_sorted;
         pTerms terms;
-        bool _is_commutative : 1 = false;
+        bool is_commutative : 1 = false;
 
-        inline auto &components() { return *terms; }
+        inline const auto &components() const { return *terms; }
 
         Compound(Connector connector, pTerms terms);
         Compound(Connector connector, std::list<pTerm> &terms);
@@ -44,6 +44,12 @@ namespace COMPOUND
         // Compound(Connector connector, std::initializer_list<Term&> terms);
         Compound(Connector connector, std::initializer_list<pTerm> terms);
         Compound(Connector connector, pTerm term) : Compound(connector, {term}){};
+
+        template <typename _T>
+        inline static auto create(Connector connector, _T& terms)
+        {
+            return pTerm(new Compound(connector, terms));
+        }
 
         static auto ExtensionalSet(std::initializer_list<pTerm> terms)
         {

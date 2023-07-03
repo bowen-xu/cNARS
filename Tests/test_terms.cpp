@@ -39,3 +39,18 @@ TEST(test_terms, test_terms0)
         std::cout << term->hash_value << std::endl;
     }
 }
+
+TEST(test_terms, test_insert)
+{
+    using TERM::pTerm;
+    using TERM::Term;
+    using TERM::Terms;
+    Terms terms({Term::create(), Term::create()}, true);
+    std::vector<pTerm> vec{Term::create()};
+    terms.begin();
+    vec.insert(vec.end(), terms.begin(), terms.end());
+    for (auto& term:vec)
+    {
+        std::cout << term->hash_value << std::endl;
+    }
+}

@@ -156,19 +156,35 @@ namespace TERM
     class Iterator
     {
     public:
-        using iterator_category = typename std::iterator_traits<pTerm *>::iterator_category;
-        using value_type = typename std::iterator_traits<pTerm *>::value_type;
+        // using iterator_category = typename std::iterator_traits<pTerm *>::iterator_category;
+        // using value_type = typename std::iterator_traits<pTerm *>::value_type;
+        using value_type = pTerm;
+        // using reference = pTerm&;
+        // using pointer = pTerm*;
+        using difference_type = std::ptrdiff_t;
+        using iterator_category = std::input_iterator_tag;
 
     public:
+        Iterator(const Iterator &iterator)
+        {
+            *this = iterator;
+            if (this->_is_commutative)
+                it_ = new auto(*(std::set<pTerm>::iterator *)(iterator.it_));
+            else
+                it_ = new auto(*(std::vector<pTerm>::iterator *)(iterator.it_));
+        }
         Iterator(std::vector<pTerm>::const_iterator it) : it_((void *)new auto(it)), _is_commutative(false) {}
         Iterator(std::set<pTerm>::iterator it) : it_((void *)new auto(it)), _is_commutative(true) {}
 
         ~Iterator()
         {
+            if (it_ == nullptr)
+                return;
             if (this->_is_commutative)
                 delete ((std::vector<pTerm>::iterator *)it_);
             else
                 delete ((std::set<pTerm>::iterator *)it_);
+            it_ = nullptr;
         }
 
         const pTerm &operator*()
@@ -201,6 +217,14 @@ namespace TERM
                 return (*((std::vector<pTerm>::iterator *)this->it_)) != (*((std::vector<pTerm>::iterator *)other.it_));
         }
 
+        bool operator==(const Iterator &other) const
+        {
+            if (this->_is_commutative)
+                return (*((std::set<pTerm>::iterator *)this->it_)) == (*((std::set<pTerm>::iterator *)other.it_));
+            else
+                return (*((std::vector<pTerm>::iterator *)this->it_)) == (*((std::vector<pTerm>::iterator *)other.it_));
+        }
+
         Iterator operator+(int n) const
         {
             if (this->_is_commutative)
@@ -226,9 +250,9 @@ namespace TERM
             }
             else
             {
-                std::vector<pTerm>::iterator newIt = *(std::vector<pTerm>::iterator *)it_;
-                std::advance(newIt, -n);
-                return Iterator(newIt);
+                std::vector<pTerm>::iterator new_it = *(std::vector<pTerm>::iterator *)it_;
+                std::advance(new_it, -n);
+                return Iterator(new_it);
             }
         }
 
@@ -257,6 +281,10 @@ namespace TERM
         {
             this->fill_terms(terms);
         }
+        Terms(std::set<pTerm> terms, bool is_commutative) : _is_commutative(is_commutative)
+        {
+            this->fill_terms(terms);
+        }
         Terms(std::vector<pTerm> &terms, bool is_commutative) : _is_commutative(is_commutative)
         {
             this->fill_terms(terms);
@@ -267,12 +295,98 @@ namespace TERM
             this->fill_terms(terms);
         }
 
+        Terms(Terms& terms, bool is_commutative) : _is_commutative(is_commutative)
+        {
+            this->fill_terms(terms);
+        }
+
+        template <typename _T>
+        inline static pTerms create(_T terms, bool is_commutative)
+        {
+            return pTerms(new Terms(terms, is_commutative));
+        }
+
+        inline static auto intersection(std::vector<pTerms> terms_all)
+        {
+            if (terms_all.size() == 0)
+                throw std::runtime_error("Empty input.");
+
+            auto it = terms_all.begin();
+            std::set<pTerm> intersection((*it)->terms_unordered);
+            for (++it; it != terms_all.end(); ++it)
+            {
+                const auto& terms = *(*it);
+                if (!terms._is_commutative)
+                    throw std::runtime_error("Each `Terms` should be commutative.");
+                std::set<pTerm> temp;
+                std::set_intersection(
+                intersection.begin(), intersection.end(),
+                terms.begin(), terms.end(),
+                std::inserter(temp, temp.begin()));
+                intersection = temp;
+            }
+            return Terms::create(intersection, true);
+        }
+
+        inline static auto union_(std::vector<pTerms> terms_all)
+        {
+            if (terms_all.size() == 0)
+                throw std::runtime_error("Empty input.");
+
+            auto it = terms_all.begin();
+            std::set<pTerm> union_((*it)->terms_unordered);
+            for (++it; it != terms_all.end(); ++it)
+            {
+                const auto& terms = *(*it);
+                if (!terms._is_commutative)
+                    throw std::runtime_error("Each `Terms` should be commutative.");
+                std::set<pTerm> temp;
+                std::set_union(
+                union_.begin(), union_.end(),
+                terms.begin(), terms.end(),
+                std::inserter(temp, temp.begin()));
+                union_ = temp;
+            }
+            return Terms::create(union_, true);
+        }
+
+        inline static auto difference(std::vector<pTerms> terms_all)
+        {
+            if (terms_all.size() == 0)
+                throw std::runtime_error("Empty input.");
+
+            auto it = terms_all.begin();
+            std::set<pTerm> difference((*it)->terms_unordered);
+            for (++it; it != terms_all.end(); ++it)
+            {
+                const auto& terms = *(*it);
+                if (!terms._is_commutative)
+                    throw std::runtime_error("Each `Terms` should be commutative.");
+                std::set<pTerm> temp;
+                std::set_difference(
+                difference.begin(), difference.end(),
+                terms.begin(), terms.end(),
+                std::inserter(temp, temp.begin()));
+                difference = temp;
+            }
+            return Terms::create(difference, true);
+        }
+
+
         inline void push_back(pTerm term)
         {
             if (this->_is_commutative)
-                this->terms_ordered.push_back(term);
-            else
                 this->terms_unordered.insert(term);
+            else
+                this->terms_ordered.push_back(term);
+        }
+
+        inline auto size()
+        {
+            if (this->_is_commutative)
+                return this->terms_unordered.size();
+            else
+                return this->terms_ordered.size();
         }
 
         Iterator begin() const
@@ -291,28 +405,33 @@ namespace TERM
                 return Iterator(this->terms_ordered.end());
         }
 
-        private:
-            template <typename _T>
-            void fill_terms(_T terms)
+        operator std::vector<pTerm>() const {
+            if (this->_is_commutative)
+                return std::vector<pTerm>(this->terms_unordered.begin(), this->terms_unordered.end());
+            else
+                return this->terms_ordered;
+        }
+
+    private:
+        template <typename _T>
+        void fill_terms(_T terms)
+        {
+            if (this->_is_commutative)
             {
-                if (this->_is_commutative)
+                for (auto it = terms.begin(); it != terms.end(); it++)
                 {
-                    for (auto it = terms.begin(); it != terms.end(); it++)
-                    {
-                        this->terms_unordered.insert((*it));
-                    }
-                }
-                else
-                {
-                    for (auto it = terms.begin(); it != terms.end(); it++)
-                    {
-                        this->terms_ordered.push_back((*it));
-                    }
+                    this->terms_unordered.insert((*it));
                 }
             }
+            else
+            {
+                for (auto it = terms.begin(); it != terms.end(); it++)
+                {
+                    this->terms_ordered.push_back((*it));
+                }
+            }
+        }
     };
-    
-
 
 } // namespace Term
 #include "./Term.inl"

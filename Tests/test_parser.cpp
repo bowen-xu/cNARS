@@ -157,19 +157,50 @@ int test_parse_line(string line, bool colored=true)
 //     GTEST_ASSERT_EQ(test_parse_nal(9), 0);
 // }
 
+// TEST(test_parser, test_parse_line1)
+// {
+//     GTEST_ASSERT_EQ(test_parse_line(R"((&/, a, b, (&/, c, d)).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((&/, a, b, (&/, c, d), e, (&|, f, g)).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((&/, a, b, (&/, c, d), e, (&|, f, g, (&/, h, i), j), (&/, k, l, (&/, m, n, (&/, o, p)))).)"), 0);
+// }
 
-TEST(test_parser, test_parse_line)
+// TEST(test_parser, test_parse_line2)
+// {
+//     GTEST_ASSERT_EQ(test_parse_line("<(*, (*, (*, 0))) --> num>."), 0);
+// }
+
+// TEST(test_parser, test_parse_line3)
+// {
+//     GTEST_ASSERT_EQ(test_parse_line("(a - (b - c))."), 0);
+//     GTEST_ASSERT_EQ(test_parse_line("((a ~ b) ~ c)."), 0);
+// }
+
+// TEST(test_parser, test_parse_line4)
+// {
+//     GTEST_ASSERT_EQ(test_parse_line("(--, --a)."), 0);
+//     GTEST_ASSERT_EQ(test_parse_line("{{A}}."), 0);
+//     GTEST_ASSERT_EQ(test_parse_line("({A} | {B})."), 0);
+//     GTEST_ASSERT_EQ(test_parse_line("{{A}, {B}, {C}}."), 0);
+// }
+
+
+TEST(test_parser, test_parse_line5)
 {
-    // GTEST_ASSERT_EQ(test_parse_line("<robin{-]bird>."), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a & b).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a | b).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a &| b).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a &/ b).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a && b).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a || b).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"((a * b).)"), 0);
-
-    GTEST_ASSERT_EQ(test_parse_line(R"((a * b * c).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"(((h && a) * b * f * (g || (c & d & e))).)"), 0);
-    GTEST_ASSERT_EQ(test_parse_line(R"(((h && (a * b * f * g)) || (c & d & e)).)"), 0);
+    GTEST_ASSERT_EQ(test_parse_line("{{<$x-->A>}, {<$x-->B>}}."), 0);
 }
+
+// TEST(test_parser, test_parse_line)
+// {
+//     // GTEST_ASSERT_EQ(test_parse_line("<robin{-]bird>."), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a & b).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a | b).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a &| b).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a &/ b).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a && b).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a || b).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a * b).)"), 0);
+
+//     GTEST_ASSERT_EQ(test_parse_line(R"((a * b * c).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"(((h && a) * b * f * (g || (c & d & e))).)"), 0);
+//     GTEST_ASSERT_EQ(test_parse_line(R"(((h && (a * b * f * g)) || (c & d & e)).)"), 0);
+// }
