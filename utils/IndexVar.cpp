@@ -5,14 +5,16 @@
 #include <set>
 #include <unordered_set>
 #include <vector>
+#include "./hash.h"
 
 using std::vector;
 
 using namespace INDEXVAR;
+using UTILS::hash;
 
 /* Helper Functions */
 
-std::shared_ptr<vector<int>> _normalize(const vector<int> &variables)
+inline std::shared_ptr<vector<int>> _normalize(const vector<int> &variables)
 {
     std::set<int> p1(variables.begin(), variables.end());
     vector<int> p2(p1.begin(), p1.end());
@@ -32,7 +34,7 @@ std::shared_ptr<vector<int>> _normalize(const vector<int> &variables)
     return result;
 }
 
-std::shared_ptr<vector<int>> _normalize(const vector<pInt> &indices)
+inline std::shared_ptr<vector<int>> _normalize(const vector<pInt> &indices)
 {
     std::vector<int> variables;
     for (const auto &var : indices)
@@ -60,6 +62,10 @@ std::shared_ptr<vector<int>> IndexVar::normalize()
 
 void IndexVar::connect(pIndexVar father, pIndexVar son, bool generate_pos)
 {
+    father->_is_hashed = false;
+    father->_is_built = false;
+    father->_indices_normalized = nullptr;
+
     father->successors.push_back(son);
     son->predecessor = father;
 
@@ -108,11 +114,15 @@ void IndexVar::build(bool rebuild)
     }
 
     this->_is_built = true;
+    this->_hash_value = hash(*this);
 }
 
 pInt IndexVar::add(int idx, const std::vector<int> &position)
 {
     auto iv = pInt(new int(idx));
+    // this->_is_built = false;
+    this->_is_hashed = false;
+    this->_indices_normalized = nullptr;
 
     if (position.empty())
     {
@@ -133,6 +143,9 @@ pInt IndexVar::add(int idx, const std::vector<int> &position)
 
 void IndexVar::remove(const std::vector<int> &position)
 {
+    this->_is_hashed = false;
+    this->_indices_normalized = nullptr;
+    
     IndexVar *index = this;
     for (int pos : position)
     {

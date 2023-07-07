@@ -57,9 +57,9 @@ namespace UTILS
     };
 
     template<typename _T>
-    size_t hash(_T& term)
+    size_t hash(_T& item)
     {
-        return term.__hash__();
+        return item.__hash__();
     }
 } // namespace UTILS
 

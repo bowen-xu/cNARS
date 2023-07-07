@@ -24,10 +24,26 @@ namespace TERM
     using std::string;
     using std::unordered_set;
     using UTILS::Hash;
+    using UTILS::hash;
 
     class Terms;
     class Term;
-    typedef std::shared_ptr<Term> pTerm;
+    // typedef std::shared_ptr<Term> pTerm;
+    class pTerm : public std::shared_ptr<Term>
+    {
+    private:
+        void *_interpreter = nullptr;
+
+    public:
+        pTerm(Term *term, void *interpreter = nullptr) : std::shared_ptr<Term>(term), _interpreter(interpreter) {}
+        pTerm() : std::shared_ptr<Term>() {}
+
+        ~pTerm();
+
+    private:
+        void _free_from_interpreter();
+    };
+
     typedef std::shared_ptr<Terms> pTerms;
 
     enum TermType
@@ -36,15 +52,24 @@ namespace TERM
         STATEMENT = 1,
         COMPOUND = 2,
         INTERVAL = -1,
-        OPERATION = -2
+        OPERATION = -2,
+        VARIABLE = -3
     };
 
     class Term
     {
     public:
-        TermType type = TermType::ATOM;
+        /* for statement */
+        pTerm subject;
+        pTerm predicate;
         Copula copula = COPULA::None;
+
+        /* for compound */
         Connector connector = CONNECTOR::None;
+        pTerms terms;
+
+        /* for all */
+        TermType type = TermType::ATOM;
 
         bool is_var : 1 = false;
         bool is_ivar : 1 = false;
@@ -73,7 +98,7 @@ namespace TERM
         // Term(int hash_value);
         // Term(char *_word);
         // string word;
-        Term() : hash_value(Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this})){};
+        Term() : hash_value(Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this})), is_hashed(true){};
         // Term(std::string _word) : word(_word) {}
 
         // bool __eq__(Term o)
@@ -87,19 +112,55 @@ namespace TERM
         //     return __eq__(term);
         // }
 
-        virtual size_t __hash__()
+        size_t __hash__()
         {
+            return this->is_hashed ? this->hash_value : this->do_hashing();
+        }
+
+        virtual size_t do_hashing()
+        {
+            this->hash_value = Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this});
+            this->is_hashed = true;
             return this->hash_value;
         }
 
-        inline bool is_atom() { return this->type == TermType::ATOM; }
-        inline bool is_statement() { return this->type == TermType::STATEMENT; }
-        inline bool is_compound() { return this->type == TermType::COMPOUND; }
+        inline bool is_atom() const { return this->type == TermType::ATOM; }
+        inline bool is_statement() const { return this->type == TermType::STATEMENT; }
+        inline bool is_compound() const { return this->type == TermType::COMPOUND; }
 
         static pTerm create()
         {
             return pTerm(new Term());
         }
+
+        inline static pTerm clone(pTerm term)
+        {
+            if (term->has_var)
+            {
+                return term;
+                if (term->is_atom())
+                {
+                }
+                else if (term->is_statement())
+                {
+                }
+                else if (term->is_compound())
+                {
+                }
+                else
+                {
+                    throw std::runtime_error("Invalid TermType.");
+                }
+            }
+            else
+            {
+                return term;
+            }
+        }
+
+        bool operator==(Term &other);
+
+        bool operator<(Term &other);
 
     protected:
         template <typename _Container>
@@ -117,19 +178,7 @@ namespace TERM
 
         void _init_indexvars(const std::array<pIndexVar, 3> &variables, const Terms &terms);
 
-        void _init_indexvars(const std::array<pIndexVar, 3> &variables, std::initializer_list<pTerm> terms)
-        {
-            for (auto term : terms)
-            {
-                auto indexvars2 = term->_index_vars();
-                auto it = indexvars2.begin();
-                for (const auto indexvar1 : variables)
-                {
-                    auto indexvar2 = *it;
-                    IndexVar::connect(indexvar1, indexvar2, false);
-                }
-            }
-        }
+        void _init_indexvars(const std::array<pIndexVar, 3> &variables, std::initializer_list<pTerm> terms);
 
         void _build_indexvars()
         {
@@ -264,9 +313,21 @@ namespace TERM
     class Terms
     {
     public:
+        struct compare
+        {
+            bool operator()(const pTerm &a, const pTerm &b) const
+            {
+                auto &term1 = *a;
+                auto &term2 = *b;
+                return term1 < term2;
+                // return a < b;
+            }
+        };
+
+    public:
         // std::vector<pTerm> terms;
         std::vector<pTerm> terms_ordered;
-        std::set<pTerm> terms_unordered;
+        std::set<pTerm, compare> terms_unordered;
 
         IndexVar _vars_independent = IndexVar();
         IndexVar _vars_dependent = IndexVar();
@@ -281,7 +342,8 @@ namespace TERM
         {
             this->fill_terms(terms);
         }
-        Terms(std::set<pTerm> terms, bool is_commutative) : _is_commutative(is_commutative)
+        template <typename _Compare>
+        Terms(std::set<pTerm, _Compare> terms, bool is_commutative) : _is_commutative(is_commutative)
         {
             this->fill_terms(terms);
         }
@@ -295,9 +357,14 @@ namespace TERM
             this->fill_terms(terms);
         }
 
-        Terms(Terms& terms, bool is_commutative) : _is_commutative(is_commutative)
+        Terms(Terms &terms, bool is_commutative) : _is_commutative(is_commutative)
         {
             this->fill_terms(terms);
+        }
+
+        inline static pTerms create(bool is_commutative)
+        {
+            return pTerms(new Terms(is_commutative));
         }
 
         template <typename _T>
@@ -312,17 +379,17 @@ namespace TERM
                 throw std::runtime_error("Empty input.");
 
             auto it = terms_all.begin();
-            std::set<pTerm> intersection((*it)->terms_unordered);
+            std::set<pTerm, compare> intersection((*it)->terms_unordered);
             for (++it; it != terms_all.end(); ++it)
             {
-                const auto& terms = *(*it);
+                const auto &terms = *(*it);
                 if (!terms._is_commutative)
                     throw std::runtime_error("Each `Terms` should be commutative.");
-                std::set<pTerm> temp;
+                std::set<pTerm, compare> temp;
                 std::set_intersection(
-                intersection.begin(), intersection.end(),
-                terms.begin(), terms.end(),
-                std::inserter(temp, temp.begin()));
+                    intersection.begin(), intersection.end(),
+                    terms.begin(), terms.end(),
+                    std::inserter(temp, temp.begin()));
                 intersection = temp;
             }
             return Terms::create(intersection, true);
@@ -334,17 +401,17 @@ namespace TERM
                 throw std::runtime_error("Empty input.");
 
             auto it = terms_all.begin();
-            std::set<pTerm> union_((*it)->terms_unordered);
+            std::set<pTerm, compare> union_((*it)->terms_unordered);
             for (++it; it != terms_all.end(); ++it)
             {
-                const auto& terms = *(*it);
+                const auto &terms = *(*it);
                 if (!terms._is_commutative)
                     throw std::runtime_error("Each `Terms` should be commutative.");
-                std::set<pTerm> temp;
+                std::set<pTerm, compare> temp;
                 std::set_union(
-                union_.begin(), union_.end(),
-                terms.begin(), terms.end(),
-                std::inserter(temp, temp.begin()));
+                    union_.begin(), union_.end(),
+                    terms.begin(), terms.end(),
+                    std::inserter(temp, temp.begin()));
                 union_ = temp;
             }
             return Terms::create(union_, true);
@@ -356,22 +423,21 @@ namespace TERM
                 throw std::runtime_error("Empty input.");
 
             auto it = terms_all.begin();
-            std::set<pTerm> difference((*it)->terms_unordered);
+            std::set<pTerm, compare> difference((*it)->terms_unordered);
             for (++it; it != terms_all.end(); ++it)
             {
-                const auto& terms = *(*it);
+                const auto &terms = *(*it);
                 if (!terms._is_commutative)
                     throw std::runtime_error("Each `Terms` should be commutative.");
-                std::set<pTerm> temp;
+                std::set<pTerm, compare> temp;
                 std::set_difference(
-                difference.begin(), difference.end(),
-                terms.begin(), terms.end(),
-                std::inserter(temp, temp.begin()));
+                    difference.begin(), difference.end(),
+                    terms.begin(), terms.end(),
+                    std::inserter(temp, temp.begin()));
                 difference = temp;
             }
             return Terms::create(difference, true);
         }
-
 
         inline void push_back(pTerm term)
         {
@@ -405,7 +471,8 @@ namespace TERM
                 return Iterator(this->terms_ordered.end());
         }
 
-        operator std::vector<pTerm>() const {
+        operator std::vector<pTerm>() const
+        {
             if (this->_is_commutative)
                 return std::vector<pTerm>(this->terms_unordered.begin(), this->terms_unordered.end());
             else

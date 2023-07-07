@@ -8,6 +8,7 @@ int main(int argc, char* argv[])
 
     // testing::GTEST_FLAG(filter) = "test_parser.*:test_terms.*";
     testing::GTEST_FLAG(filter) = "test_parser.*";
+    // testing::GTEST_FLAG(filter) = "test_term.*";
     // testing::GTEST_FLAG(filter) = "test_terms.test_insert";
     return RUN_ALL_TESTS();
 }

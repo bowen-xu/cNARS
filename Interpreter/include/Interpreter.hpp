@@ -18,6 +18,7 @@ namespace INTERPRETER
     using std::map;
     using std::string;
     using TASK::Task;
+    using TERM::pTerm;
     using TERM::Term;
     using TERM::TermType;
 
@@ -25,20 +26,20 @@ namespace INTERPRETER
     {
     public:
         map<size_t, string> dictionary;
-        map<size_t, void *> objects;
+        map<size_t, pTerm *> objects;
         map<string, size_t> dictionary_inv;
         map<size_t, int> count;
 
         inline void put(int key, string name, void *object)
         {
             dictionary[key] = name;
-            objects[key] = object;
+            objects[key] = (pTerm *)object;
             dictionary_inv[name] = key;
             count[key] = (check_count(key) == 0) ? 1 : (count[key] + 1);
         }
 
         inline string &get(int key) { return dictionary[key]; }
-        inline void *get_object(int key) { return objects[key]; }
+        inline pTerm *get_object(int key) { return objects[key]; }
         inline int get_by_name(string &name) { return dictionary_inv[name]; }
         inline bool check(int key) { return dictionary.count(key) == 1; }
         inline bool check_by_name(string &name) { return dictionary_inv.count(name) == 1; }
@@ -65,6 +66,8 @@ namespace INTERPRETER
             {
                 auto name = get(key);
                 dictionary.erase(key);
+                objects.erase(key);
+                count.erase(key);
                 if (check_by_name(name))
                 {
                     dictionary_inv.erase(name);
@@ -85,7 +88,10 @@ namespace INTERPRETER
                 if (check(key))
                 {
                     dictionary.erase(key);
+                    objects.erase(key);
+                    count.erase(key);
                 }
+
                 return true;
             }
             else

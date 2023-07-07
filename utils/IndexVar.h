@@ -36,6 +36,7 @@ namespace INDEXVAR
         vector<pInt> indices;
 
         unsigned int _hash_value = 0;
+        bool _is_hashed : 1 = false;
 
         std::weak_ptr<IndexVar> predecessor;
         // IndexVar *predecessor;
@@ -75,12 +76,13 @@ namespace INDEXVAR
             auto __indices_normalized = indices_normalized();
 
             this->_hash_value = Hash{}(*__indices_normalized);
+            this->_is_hashed = true;
             return this->_hash_value;
         }
 
         size_t __hash__()
         {
-            return this->_hash_value != 0 ? this->_hash_value : this->do_hashing();
+            return this->_is_hashed ? this->_hash_value : this->do_hashing();
         }
 
         bool operator==(IndexVar *other)

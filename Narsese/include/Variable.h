@@ -2,11 +2,13 @@
 #define _VARIABLE_H
 
 #include "Term.h"
+#include "utils/hash.h"
 
 namespace VARIABLE
 {
     using std::string;
     using TERM::Term;
+    using UTILS::Hash;
 
     enum VarPrefix
     {
@@ -25,6 +27,13 @@ namespace VARIABLE
 
     public:
         Variable(VarPrefix _prefix, string _name);
+
+        virtual size_t do_hashing()
+        {
+            this->hash_value = Hash{}(std::initializer_list<size_t>{(size_t)(TERM::TermType::VARIABLE),(size_t)(this->prefix)});
+            this->is_hashed = true;
+            return this->hash_value;
+        }
 
     // public:
     //     operator string () const {

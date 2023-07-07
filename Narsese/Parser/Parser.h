@@ -37,6 +37,11 @@ namespace PARSER
         Args *transform(_ast *node);
 
         TASK::pTask parse_task(std::string &input);
+        TASK::pTask parse_task(const char* input) 
+        {
+            auto str = std::string(input);
+            return parse_task(str);
+        }
         void *parse_string(std::string &input);
         void *parse_input();
         void regist(const char *name, METHOD function);

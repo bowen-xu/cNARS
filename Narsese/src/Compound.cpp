@@ -119,7 +119,7 @@ Returns:
 std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connector_parent, pTerms terms)
 {
     // static const std::set<Connector> set1{Connector::Product, Connector::IntensionalImage, Connector::ExtensionalImage, Connector::ExtensionalDifference, Connector::IntensionalDifference};
-
+    auto is_commutative = CONNECTOR::is_commutative(connector_parent);
     if (!CONNECTOR::is_reducible(connector_parent))
     {
         /*
@@ -128,7 +128,7 @@ std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connecto
         */
         return {connector_parent, terms};
     }
-    if (self.is_commutative)
+    if (is_commutative)
     {
         /*
         if there are terms with the same commutative connector, they should be combined together
@@ -172,7 +172,7 @@ std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connecto
             if (terms_merged == nullptr)
             {
                 for (auto &compound : compounds)
-                    terms_norm.push_back({connector, Terms::create(std::vector{compound}, true)});
+                    terms_norm.push_back({connector, compound->terms});
                 continue;
             }
 
@@ -251,7 +251,7 @@ std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connecto
         /*
         E.g. (&/, (&/, A, B), (&|, C, D), E) will be converted to (&/, A, B, (&|, C, D), E)
         */
-        auto expanded_terms = pTerms(new Terms(self.is_commutative));
+        auto expanded_terms = pTerms(new Terms(is_commutative));
 
         for (const auto &term : *terms)
         {
@@ -273,31 +273,43 @@ std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connecto
     return {connector_parent, terms};
 }
 
-Compound::Compound(Connector connector, pTerms terms) : terms(terms)
+Compound::Compound(Connector connector, pTerms terms, bool is_input)
 {
+    this->is_hashed = false;
+
     this->type = TermType::COMPOUND;
     this->connector = connector;
-    this->is_commutative = CONNECTOR::is_commutative(connector);
-    std::tie(this->connector, this->terms) = prepocess_terms(*this, connector, terms);
-
+    pTerms _terms;
+    std::tie(this->connector, _terms) = prepocess_terms(*this, connector, terms);
+    this->is_commutative = CONNECTOR::is_commutative(this->connector);
+    if (is_input)
+    {
+        this->terms = _terms;
+    }
+    else
+    {
+        this->terms = Terms::create(this->is_commutative);
+        for (auto &_term : *_terms)
+            this->terms->push_back(Term::clone(_term));
+    }
     this->hash_value = hash(*this);
-    this->complexity = std::accumulate(terms->begin(), terms->end(), 0,
+    this->complexity = std::accumulate(this->terms->begin(), this->terms->end(), 0,
                                        [](int sum, const auto &term)
                                        { return sum + term->complexity; });
 
     this->_refresh_var_status(*this->terms);
-    this->_init_indexvars(this->_index_vars(), this->terms.get());
+    this->_init_indexvars(this->_index_vars(), *this->terms);
     this->_build_indexvars();
 }
 
-Compound::Compound(Connector connector, std::list<pTerm> &terms) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))))
+Compound::Compound(Connector connector, std::list<pTerm> &terms, bool is_input) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))), is_input)
 {
 }
 
-Compound::Compound(Connector connector, std::vector<pTerm> &terms) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))))
+Compound::Compound(Connector connector, std::vector<pTerm> &terms, bool is_input) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))), is_input)
 {
 }
 
-Compound::Compound(Connector connector, std::initializer_list<pTerm> terms) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))))
+Compound::Compound(Connector connector, std::initializer_list<pTerm> terms, bool is_input) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))), is_input)
 {
 }

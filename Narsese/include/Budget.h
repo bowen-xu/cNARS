@@ -8,6 +8,9 @@
 
 namespace BUDGET
 {
+    class Budget;
+    typedef std::shared_ptr<Budget> pBudget;
+
     class Budget
     {
     private:
@@ -22,16 +25,19 @@ namespace BUDGET
 
         Budget(float priority=_priority_default, float durability=_durability_default, float quality=_quality_default) : priority(priority), durability(durability), quality(quality) {};
 
-
         static auto quality_from_truth(const TRUTH::Truth& t)
         {
             auto e = t.e();
             return std::max(e, (1 - e) * 0.75);
         }
+
+        static pBudget create(float priority=_priority_default, float durability=_durability_default, float quality=_quality_default)
+        {
+            return pBudget(new Budget(priority, durability, quality));
+        }
         
     };
 
-    typedef std::shared_ptr<Budget> pBudget;
 } // namespace BUDGET
 
 

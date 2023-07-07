@@ -55,6 +55,14 @@ using namespace NARSESEPARSER;
 
 // extern INTERPRETER::Interpreter INTERPRETER::interpreter;
 
+template <typename _T = pTerm>
+inline _T get(void *obj)
+{
+	_T ret = _T(*(_T *)obj);
+	delete (_T *)obj;
+	return ret;
+}
+
 /*definitions*/
 void *NARSESEPARSER::task(Parser *self, const Args &args)
 {
@@ -112,7 +120,7 @@ void *NARSESEPARSER::judgement(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
-	Term &term = *(Term *)args[0];
+	pTerm term = get(args[0]);
 	Truth *truth = nullptr;
 	Stamp *stamp = nullptr;
 
@@ -154,7 +162,7 @@ void *NARSESEPARSER::judgement(Parser *self, const Args &args)
 			truth->k = CONFIG::k;
 	}
 
-	auto &judgement = *(new Judgement(pTerm(&term), pTruth(truth), pStamp(stamp)));
+	auto &judgement = *(new Judgement(term, pTruth(truth), pStamp(stamp)));
 	ret = &judgement;
 	return ret;
 }
@@ -163,7 +171,7 @@ void *NARSESEPARSER::question(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
-	Term &term = *(Term *)args[0];
+	pTerm term = get(args[0]);
 	Stamp *stamp = nullptr;
 	for (auto it = args.begin() + 1; it != args.end(); it++)
 	{
@@ -186,7 +194,7 @@ void *NARSESEPARSER::question(Parser *self, const Args &args)
 		stamp = new Stamp(true);
 	}
 
-	auto &question = *(new Question(pTerm(&term), pStamp(stamp)));
+	auto &question = *(new Question(term, pStamp(stamp)));
 	ret = &question;
 	return ret;
 }
@@ -195,7 +203,7 @@ void *NARSESEPARSER::goal(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
-	Term &term = *(Term *)args[0];
+	pTerm term = get(args[0]);
 	// Truth &desire = (n_args >= 2) ? *(Truth *)args[1] : *(new Truth(CONFIG::f, CONFIG::c, CONFIG::k));
 	Truth *desire = nullptr;
 	Stamp *stamp = nullptr;
@@ -237,7 +245,7 @@ void *NARSESEPARSER::goal(Parser *self, const Args &args)
 			desire->k = CONFIG::k;
 	}
 
-	auto &goal = *(new Goal(pTerm(&term), pTruth(desire), pStamp(stamp)));
+	auto &goal = *(new Goal(term, pTruth(desire), pStamp(stamp)));
 	ret = &goal;
 	return ret;
 }
@@ -246,7 +254,7 @@ void *NARSESEPARSER::quest(Parser *self, const Args &args)
 {
 	void *ret;
 	auto n_args = args.size();
-	Term &term = *(Term *)args[0];
+	pTerm term = get(args[0]);
 
 	Stamp *stamp = nullptr;
 	for (auto it = args.begin() + 1; it != args.end(); it++)
@@ -270,7 +278,7 @@ void *NARSESEPARSER::quest(Parser *self, const Args &args)
 		stamp = new Stamp(true);
 	}
 
-	auto &quest = *(new Quest(pTerm(&term), pStamp(stamp)));
+	auto &quest = *(new Quest(term, pStamp(stamp)));
 	ret = &quest;
 	return ret;
 }
@@ -278,31 +286,31 @@ void *NARSESEPARSER::quest(Parser *self, const Args &args)
 void *NARSESEPARSER::statement(Parser *self, const Args &args)
 {
 	void *ret;
-	Term &subject = *(Term *)args[0];
+	pTerm subject = get(args[0]);
 	Copula &copula = *(Copula *)args[1];
-	Term &predicate = *(Term *)args[2];
+	pTerm predicate = get(args[2]);
 	Statement *statement;
 	if (copula == Copula::Instance)
 	{
-		auto instance = Compound::ExtensionalSet({pTerm(&subject)});
-		statement = new Statement(instance, Copula::Inheritance, pTerm(&predicate));
+		auto instance = Compound::ExtensionalSet({subject});
+		statement = new Statement(instance, Copula::Inheritance, predicate, true);
 	}
 	else if (copula == Copula::Property)
 	{
-		auto property = Compound::IntensionalSet({pTerm(&predicate)});
-		statement = new Statement(pTerm(&subject), Copula::Inheritance, property);
+		auto property = Compound::IntensionalSet({predicate});
+		statement = new Statement(subject, Copula::Inheritance, property, true);
 	}
 	else if (copula == Copula::InstanceProperty)
 	{
-		auto instance = Compound::ExtensionalSet({pTerm(&subject)});
-		auto property = Compound::IntensionalSet({pTerm(&predicate)});
-		statement = new Statement(instance, Copula::Inheritance, property);
+		auto instance = Compound::ExtensionalSet({subject});
+		auto property = Compound::IntensionalSet({predicate});
+		statement = new Statement(instance, Copula::Inheritance, property, true);
 	}
 	else
 	{
-		statement = new Statement(pTerm(&subject), copula, pTerm(&predicate));
+		statement = new Statement(subject, copula, predicate, true);
 	}
-	ret = statement;
+	ret = new pTerm(statement);
 	return ret;
 }
 
@@ -313,11 +321,11 @@ void *NARSESEPARSER::statement_operation1(Parser *self, const Args &args)
 	std::vector<pTerm> terms;
 	for (auto it = args.begin() + 1; it != args.end(); it++)
 	{
-		auto &arg = (*it);
-		auto term = pTerm((Term *)arg);
+		auto term = get(*it);
 		terms.push_back(term);
 	}
-	auto &stat = *(new Statement(pTerm(new Compound(CONNECTOR::PRODUCT, terms)), COPULA::INHERITANCE, pTerm((Operation *)args[0])));
+	auto op = get(args[0]);
+	auto &stat = *new pTerm(new Statement(pTerm(new Compound(CONNECTOR::PRODUCT, terms, true)), COPULA::INHERITANCE, op, true));
 	ret = &stat;
 	return ret;
 }
@@ -405,42 +413,42 @@ void *NARSESEPARSER::concurrent_equivalence(Parser *self, const Args &args)
 void *NARSESEPARSER::variable_term(Parser *self, const Args &args)
 {
 	void *ret;
-	auto &var = *((VARIABLE::Variable *)args[0]);
-	ret = &var;
+	auto var = (pTerm *)args[0];
+	ret = var;
 	return ret;
 }
 void *NARSESEPARSER::atom_term(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &str = *((std::string *)args[0]);
-	Term *term;
+	pTerm *term;
 	if (INTERPRETER::interpreter.check_by_name(str) > 0)
 	{
 		auto key = INTERPRETER::interpreter.get_by_name(str);
-		term = (Term *)INTERPRETER::interpreter.get_object(key);
+		term = (pTerm *)INTERPRETER::interpreter.get_object(key);
 	}
 	else
 	{
-		term = (new Term());
-		INTERPRETER::interpreter.put(term->hash_value, str, (void *)term);
+		term = new pTerm(new Term(), &INTERPRETER::interpreter);
+		INTERPRETER::interpreter.put((*term)->hash_value, str, (void *)term);
 	}
 
 	delete &str;
-	ret = term;
+	ret = new pTerm(*term);
 	return ret;
 }
 void *NARSESEPARSER::compound_term(Parser *self, const Args &args)
 {
 	void *ret;
-	auto &compound = *(Compound *)args[0];
-	ret = &compound;
+	auto compound = (pTerm *)args[0];
+	ret = compound;
 	return ret;
 }
 void *NARSESEPARSER::statement_term(Parser *self, const Args &args)
 {
 	void *ret;
-	auto &statement = *(Statement *)args[0];
-	ret = &statement;
+	auto statement = (pTerm *)args[0];
+	ret = statement;
 	return ret;
 }
 void *NARSESEPARSER::operation(Parser *self, const Args &args)
@@ -448,28 +456,28 @@ void *NARSESEPARSER::operation(Parser *self, const Args &args)
 	void *ret;
 	auto &str = *((std::string *)args[0]);
 	auto str_op = "^" + str;
-	Operation *term;
+	pTerm *term;
 	if (INTERPRETER::interpreter.check_by_name(str) > 0)
 	{
 		auto key = INTERPRETER::interpreter.get_by_name(str_op);
-		term = (Operation *)INTERPRETER::interpreter.get_object(key);
+		term = (pTerm *)INTERPRETER::interpreter.get_object(key);
 	}
 	else
 	{
-		term = (new Operation());
-		INTERPRETER::interpreter.put(term->hash_value, str_op, (void *)term);
+		term = new pTerm(new Operation(), &INTERPRETER::interpreter);
+		INTERPRETER::interpreter.put((*term)->hash_value, str_op, (void *)term);
 	}
 
 	delete &str;
-	ret = term;
+	ret = new pTerm(*term);
 	return ret;
 }
 void *NARSESEPARSER::interval(Parser *self, const Args &args)
 {
 	void *ret;
 	double dt = std::stod((char *)args[0]);
-	auto &interval = *(new Interval((signed int)dt));
-	ret = &interval;
+	auto interval = (new pTerm(new Interval((signed int)dt)));
+	ret = interval;
 	return ret;
 }
 void *NARSESEPARSER::set(Parser *self, const Args &args)
@@ -481,19 +489,20 @@ void *NARSESEPARSER::set(Parser *self, const Args &args)
 
 	for (it++; it != args.end(); it++)
 	{
-		terms.push_back(pTerm((Term *)*it));
+		auto term = get(*it);
+		terms.push_back(term);
 	}
-	auto &compound = *(new Compound(connector, terms));
-	ret = &compound;
+	auto compound = (new pTerm(new Compound(connector, terms, true)));
+	ret = compound;
 	return ret;
 }
 void *NARSESEPARSER::negation(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[0]);
-	auto &term = *(Term *)args[1];
-	auto &compound = *(new Compound(connector, pTerm(&term)));
-	ret = &compound;
+	auto term = get(args[1]);
+	auto compound = (new pTerm(new Compound(connector, term, true)));
+	ret = compound;
 	return ret;
 }
 void *NARSESEPARSER::int_image(Parser *self, const Args &args)
@@ -529,33 +538,34 @@ void *NARSESEPARSER::multi_prefix(Parser *self, const Args &args)
 	auto it = args.begin();
 	auto &connector = *((Connector *)*it);
 	std::list<pTerm> terms;
-	// boost::container::list<int> terms2;
-	// auto it2 = terms2.begin();
-	// std::list<pTerm> terms;
 
 	for (it++; it != args.end(); it++)
 	{
-		terms.push_back(pTerm((Term *)*it));
+		auto term = get(*it);
+		terms.push_back(term);
 	}
-	auto &compound = *(new Compound(connector, terms));
-	// Compound(connector, {(Term *)args[1], (Term *)args[1]});
-	ret = &compound;
+	auto compound = (new pTerm(new Compound(connector, terms, true)));
+	ret = compound;
 	return ret;
 }
 void *NARSESEPARSER::single_prefix(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[0]);
-	auto &compound = *(new Compound(connector, {pTerm((Term *)args[1]), pTerm((Term *)args[2])}));
-	ret = &compound;
+	auto term1 = get(args[1]);
+	auto term2 = get(args[2]);
+	auto compound = (new pTerm(new Compound(connector, {term1, term2}, true)));
+	ret = compound;
 	return ret;
 }
 void *NARSESEPARSER::single_infix(Parser *self, const Args &args)
 {
 	void *ret;
 	auto &connector = *((Connector *)args[1]);
-	auto &compound = *(new Compound(connector, {pTerm((Term *)args[0]), pTerm((Term *)args[2])}));
-	ret = &compound;
+	auto term1 = get(args[0]);
+	auto term2 = get(args[2]);
+	auto compound = (new pTerm(new Compound(connector, {term1, term2}, true)));
+	ret = compound;
 	return ret;
 }
 void *NARSESEPARSER::multi_prod_expr(Parser *self, const Args &args)
@@ -706,13 +716,13 @@ void *NARSESEPARSER::independent_var(Parser *self, const Args &args)
 {
 	void *ret;
 	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Independent] + std::string((char *)args[0]);
-	auto &var = *(new Variable(VARIABLE::VarPrefix::Independent, name));
+	auto &var = *(new pTerm(new Variable(VARIABLE::VarPrefix::Independent, name)));
 	auto &names_map = self->names_ivar;
 	auto str = name.c_str();
 	if (names_map.count(str) == 0)
 		names_map[str] = names_map.size();
 	auto idx = names_map[name.c_str()];
-	var._vars_independent->add(idx, {});
+	var->_vars_independent->add(idx, {});
 	ret = &var;
 	return ret;
 }
@@ -720,13 +730,13 @@ void *NARSESEPARSER::dependent_var(Parser *self, const Args &args)
 {
 	void *ret;
 	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Dependent] + std::string((char *)args[0]);
-	auto &var = *(new Variable(VARIABLE::VarPrefix::Dependent, name));
+	auto &var = *(new pTerm(new Variable(VARIABLE::VarPrefix::Dependent, name)));
 	auto &names_map = self->names_dvar;
 	auto str = name.c_str();
 	if (names_map.count(str) == 0)
 		names_map[str] = names_map.size();
 	auto idx = names_map[name.c_str()];
-	var._vars_dependent->add(idx, {});
+	var->_vars_dependent->add(idx, {});
 	ret = &var;
 	return ret;
 }
@@ -734,13 +744,13 @@ void *NARSESEPARSER::query_var(Parser *self, const Args &args)
 {
 	void *ret;
 	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Qeury] + std::string((char *)args[0]);
-	auto &var = *(new Variable(VARIABLE::VarPrefix::Qeury, name));
+	auto &var = *(new pTerm(new Variable(VARIABLE::VarPrefix::Qeury, name)));
 	auto &names_map = self->names_qvar;
 	auto str = name.c_str();
 	if (names_map.count(str) == 0)
 		names_map[str] = names_map.size();
 	auto idx = names_map[name.c_str()];
-	var._vars_query->add(idx, {});
+	var->_vars_query->add(idx, {});
 	ret = &var;
 	return ret;
 }
@@ -792,7 +802,7 @@ void *NARSESEPARSER::budget(Parser *self, const Args &args)
 	q = args.size() >= 3 ? std::stod((char *)args[2]) : -1.0;
 
 	// ret = (void *)value;
-	auto &budget = *(new Budget(p, d, q));
+	auto &budget = *(new pBudget(new Budget(p, d, q)));
 	ret = &budget;
 	return ret;
 }
