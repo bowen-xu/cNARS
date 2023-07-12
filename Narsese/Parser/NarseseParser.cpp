@@ -716,7 +716,9 @@ void *NARSESEPARSER::con_product(Parser *self, const Args &args)
 void *NARSESEPARSER::independent_var(Parser *self, const Args &args)
 {
 	void *ret;
-	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Independent] + std::string((char *)args[0]);
+	auto word = (std::string *)args[0];
+	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Independent] + *word;
+	delete word;
 	auto &var = *(new pTerm(new Variable(VARIABLE::VarPrefix::Independent, name)));
 	auto &names_map = self->names_ivar;
 	auto str = name.c_str();
@@ -730,7 +732,9 @@ void *NARSESEPARSER::independent_var(Parser *self, const Args &args)
 void *NARSESEPARSER::dependent_var(Parser *self, const Args &args)
 {
 	void *ret;
-	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Dependent] + std::string((char *)args[0]);
+	auto word = (std::string *)args[0];
+	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Dependent] + *word;
+	delete word;
 	auto &var = *(new pTerm(new Variable(VARIABLE::VarPrefix::Dependent, name)));
 	auto &names_map = self->names_dvar;
 	auto str = name.c_str();
@@ -744,7 +748,9 @@ void *NARSESEPARSER::dependent_var(Parser *self, const Args &args)
 void *NARSESEPARSER::query_var(Parser *self, const Args &args)
 {
 	void *ret;
-	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Qeury] + std::string((char *)args[0]);
+	auto word = (std::string *)args[0];
+	auto name = VARIABLE::Repr[VARIABLE::VarPrefix::Qeury] + *word;
+	delete word;
 	auto &var = *(new pTerm(new Variable(VARIABLE::VarPrefix::Qeury, name)));
 	auto &names_map = self->names_qvar;
 	auto str = name.c_str();
@@ -841,7 +847,7 @@ void *NARSESEPARSER::budget(Parser *self, const Args &args)
 		q = -1.0;
 
 	// ret = (void *)value;
-	auto &budget = *(new pBudget(new Budget(p, d, q)));
+	auto &budget = *(new Budget(p, d, q));
 	ret = &budget;
 	return ret;
 }
