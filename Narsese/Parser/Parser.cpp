@@ -47,9 +47,11 @@ void* Parser::parse_string(std::string& input)
     if( this->ast )
     {
         // this->ast_print( stderr, this->ast );
-        Args& rets = *this->transform( this->ast );
+        Args* rets = this->transform( this->ast );
         this->ast = this->ast_free( this->ast );
-        return rets[0];
+        auto ret = (*rets)[0];
+        delete rets;
+        return ret;
     }
     return nullptr;
 }
@@ -62,9 +64,11 @@ void* Parser::parse_input()
     if( this->ast )
     {
         // this->ast_print( stderr, this->ast );
-        Args& rets = *this->transform( this->ast );
+        Args* rets = this->transform( this->ast );
         this->ast = this->ast_free( this->ast );
-        return rets[0];
+        auto ret = (*rets)[0];
+        delete rets;
+        return ret;
     }
     return nullptr;
 }     

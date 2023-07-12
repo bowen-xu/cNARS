@@ -5,7 +5,6 @@
 // #include "./Statement.h"
 // #include "./Compound.h"
 
-
 namespace TERM
 {
 
@@ -50,9 +49,24 @@ namespace TERM
     {
         if (this->type != other.type)
             return false;
-
+        if (hash(*this) == hash(other))
+        {
+            if (!this->has_var && !other.has_var)
+                return true;
+            else if (!(this->has_var && other.has_var))
+                return false;
+        }
         if (this->is_atom())
         {
+            if (this->is_var || other.is_var)
+            {
+                if (this->is_qvar && other.is_qvar)
+                    return *(this->_vars_independent->indices[0]) == *(other._vars_query->indices[0]);
+                else if (this->is_dvar && other.is_dvar)
+                    return *(this->_vars_independent->indices[0]) == *(other._vars_dependent->indices[0]);
+                else if (this->is_ivar && other.is_ivar)
+                    return *(this->_vars_independent->indices[0]) == *(other._vars_independent->indices[0]);
+            }
             return hash(*this) == hash(other);
         }
         else if (this->is_statement())
@@ -88,17 +102,38 @@ namespace TERM
         }
         return false;
     }
-    
+
     inline bool Term::operator<(Term &other)
     {
+        /*
+        Note:
+        This function is used to compare two terms, especially those with variables.
+        When computing intersection, union, and difference of two (ordered) `set`s of terms, this function should be used for comparison-sorting.
+        */
         if (hash(*this) != hash(other))
             return hash(*this) < hash(other);
+
+        if (!this->has_var && !other.has_var)
+            return hash(*this) < hash(other);
+        else if (!this->has_var && other.has_var)
+            return false;
+        else if (this->has_var && !other.has_var)
+            return true;
 
         if (this->type != other.type)
             return this->type < other.type;
 
         if (this->is_atom())
         {
+            if (this->is_var || other.is_var)
+            {
+                if (this->is_qvar && other.is_qvar)
+                    return *(this->_vars_query->indices[0]) < *(other._vars_query->indices[0]);
+                else if (this->is_dvar && other.is_dvar)
+                    return *(this->_vars_dependent->indices[0]) < *(other._vars_dependent->indices[0]);
+                else if (this->is_ivar && other.is_ivar)
+                    return *(this->_vars_independent->indices[0]) < *(other._vars_independent->indices[0]);
+            }
             return hash(*this) < hash(other);
         }
         else if (this->is_statement())

@@ -475,9 +475,10 @@ void *NARSESEPARSER::operation(Parser *self, const Args &args)
 void *NARSESEPARSER::interval(Parser *self, const Args &args)
 {
 	void *ret;
-	double dt = std::stod((char *)args[0]);
+	double dt = *(double *)args[0];
 	auto interval = (new pTerm(new Interval((signed int)dt)));
 	ret = interval;
+	delete (double *)args[0];
 	return ret;
 }
 void *NARSESEPARSER::set(Parser *self, const Args &args)
@@ -757,8 +758,9 @@ void *NARSESEPARSER::query_var(Parser *self, const Args &args)
 void *NARSESEPARSER::tense_time(Parser *self, const Args &args)
 {
 	void *ret;
-	double t = std::stod((char *)args[0]);
+	double t = *(double *)args[0];
 	ret = new std::tuple(0, (new (signed int)(t)));
+	delete (double *)args[0];
 	return ret;
 }
 void *NARSESEPARSER::tense_future(Parser *self, const Args &args)
@@ -784,9 +786,27 @@ void *NARSESEPARSER::truth(Parser *self, const Args &args)
 {
 	void *ret;
 	double f, c, k;
-	f = args.size() >= 1 ? std::stod((char *)args[0]) : -1.0;
-	c = args.size() >= 2 ? std::stod((char *)args[1]) : -1.0;
-	k = args.size() >= 3 ? std::stod((char *)args[2]) : CONFIG::k;
+	if (args.size() >= 1)
+	{
+		f = *(double *)args[0];
+		delete (double *)args[0];
+	}
+	else
+		f = -1.0;
+	if (args.size() >= 2)
+	{
+		c = *(double *)args[1];
+		delete (double *)args[1];
+	}
+	else
+		c = -1.0;
+	if (args.size() >= 3)
+	{
+		k = *(double *)args[2];
+		delete (double *)args[2];
+	}
+	else
+		k = CONFIG::k;
 
 	// ret = (void *)value;
 	auto &truth = *(new Truth(f, c, k));
@@ -797,9 +817,28 @@ void *NARSESEPARSER::budget(Parser *self, const Args &args)
 {
 	void *ret;
 	double p, d, q;
-	p = args.size() >= 1 ? std::stod((char *)args[0]) : -1.0;
-	d = args.size() >= 2 ? std::stod((char *)args[1]) : -1.0;
-	q = args.size() >= 3 ? std::stod((char *)args[2]) : -1.0;
+	
+	if (args.size() >= 1)
+	{
+		p = *(double *)args[0];
+		delete (double *)args[0];
+	}
+	else
+		p = -1.0;
+	if (args.size() >= 2)
+	{
+		d = *(double *)args[1];
+		delete (double *)args[1];
+	}
+	else
+		d = -1.0;
+	if (args.size() >= 3)
+	{
+		q = *(double *)args[2];
+		delete (double *)args[2];
+	}
+	else
+		q = -1.0;
 
 	// ret = (void *)value;
 	auto &budget = *(new pBudget(new Budget(p, d, q)));
@@ -823,43 +862,43 @@ void *NARSESEPARSER::string(Parser *self, const Args &args)
 void *NARSESEPARSER::quality(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0];
+	ret = new double(std::stod((char *)args[0]));
 	return ret;
 }
 void *NARSESEPARSER::durability(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0];
+	ret = new double(std::stod((char *)args[0]));
 	return ret;
 }
 void *NARSESEPARSER::priority(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0];
+	ret = new double(std::stod((char *)args[0]));
 	return ret;
 }
 void *NARSESEPARSER::k_evidence(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0]; // e.g., "1"
+	ret = new double(std::stod((char *)args[0])); // e.g., "1"
 	return ret;
 }
 void *NARSESEPARSER::confidence(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0]; // e.g., "0.90"
+	ret = new double(std::stod((char *)args[0])); // e.g., "0.90"
 	return ret;
 }
 void *NARSESEPARSER::frequency(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0]; // e.g., "0.90"
+	ret = new double(std::stod((char *)args[0])); // e.g., "0.90"
 	return ret;
 }
 void *NARSESEPARSER::integer(Parser *self, const Args &args)
 {
 	void *ret;
-	ret = args[0]; // e.g., 123
+	ret = new double(std::stod((char *)args[0])); // e.g., 123
 	return ret;
 }
 

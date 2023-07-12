@@ -329,9 +329,9 @@ namespace TERM
         std::vector<pTerm> terms_ordered;
         std::set<pTerm, compare> terms_unordered;
 
-        IndexVar _vars_independent = IndexVar();
-        IndexVar _vars_dependent = IndexVar();
-        IndexVar _vars_query = IndexVar();
+        // IndexVar _vars_independent = IndexVar();
+        // IndexVar _vars_dependent = IndexVar();
+        // IndexVar _vars_query = IndexVar();
 
         bool _is_commutative;
 
@@ -385,11 +385,11 @@ namespace TERM
                 const auto &terms = *(*it);
                 if (!terms._is_commutative)
                     throw std::runtime_error("Each `Terms` should be commutative.");
-                std::set<pTerm, compare> temp;
+                std::set<pTerm, compare> temp{};
                 std::set_intersection(
                     intersection.begin(), intersection.end(),
                     terms.begin(), terms.end(),
-                    std::inserter(temp, temp.begin()));
+                    std::inserter(temp, temp.begin()), compare{});
                 intersection = temp;
             }
             return Terms::create(intersection, true);
@@ -411,7 +411,7 @@ namespace TERM
                 std::set_union(
                     union_.begin(), union_.end(),
                     terms.begin(), terms.end(),
-                    std::inserter(temp, temp.begin()));
+                    std::inserter(temp, temp.begin()), compare{});
                 union_ = temp;
             }
             return Terms::create(union_, true);
@@ -433,7 +433,7 @@ namespace TERM
                 std::set_difference(
                     difference.begin(), difference.end(),
                     terms.begin(), terms.end(),
-                    std::inserter(temp, temp.begin()));
+                    std::inserter(temp, temp.begin()), compare{});
                 difference = temp;
             }
             return Terms::create(difference, true);

@@ -66,11 +66,16 @@ namespace INTERPRETER
             {
                 auto name = get(key);
                 dictionary.erase(key);
-                objects.erase(key);
                 count.erase(key);
                 if (check_by_name(name))
                 {
                     dictionary_inv.erase(name);
+                }
+                if (objects.find(key) != objects.end())
+                {
+                    auto ptr = objects[key];
+                    delete ptr;
+                    objects.erase(key);
                 }
                 return true;
             }
@@ -88,8 +93,13 @@ namespace INTERPRETER
                 if (check(key))
                 {
                     dictionary.erase(key);
-                    objects.erase(key);
                     count.erase(key);
+                    if (objects.find(key) != objects.end())
+                    {
+                        auto ptr = objects[key];
+                        delete ptr;
+                        objects.erase(key);
+                    }
                 }
 
                 return true;
@@ -128,6 +138,28 @@ namespace INTERPRETER
 
         // private:
         //     bool _is_colored = true;
+
+        void reset()
+        {
+
+            for (auto pair : objects)
+            {
+                auto ptr = pair.second;
+                if ((*ptr).use_count() == 1)
+                {
+                    delete ptr;
+                }
+            }
+            objects.clear();
+            dictionary.clear();
+            dictionary_inv.clear();
+            count.clear();
+        }
+
+        ~Interpreter()
+        {
+            this->reset();
+        }
     };
 
     extern Interpreter interpreter;

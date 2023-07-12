@@ -1,31 +1,35 @@
-#include <string>
-#include "Narsese/Parser/NarseseParser.h"
-#include "Narsese/include/Task.h"
-#include "Narsese/include/Statement.h"
-#include "Narsese/Parser/generate.h"
 #include "Interpreter/include/Interpreter.hpp"
+#include "Narsese/Parser/NarseseParser.h"
+#include "Narsese/Parser/generate.h"
+#include "Narsese/include/Statement.h"
+#include "Narsese/include/Task.h"
+#include <string>
+#include <vector>
+#include <memory>
 
 using INTERPRETER::interpreter;
 using TASK::Task;
 
 // using namespace PARSER;
 using NARSESEPARSER::NarseseParser;
-int main( int argc, char** argv )
+int main(int argc, char **argv)
 {
-	NarseseParser*	parser = new NarseseParser;
-	
+	auto parser = std::shared_ptr<NarseseParser>(new NarseseParser);
+
 	printf("go:\n");
 
-	const char* test_cases[] = {
+	auto test_cases = std::vector<const char*>{
 		"<robin-->bird>.",
 		"(&&, A, B).",
+		"(&&, A1, B1).",
+		"(&&, A2, B2).",
 	};
-	
-	for (int i=0; i<2; i++)
+
+	for (int i = 0; i < test_cases.size(); i++)
 	{
 		std::string input(test_cases[i]);
-		Task& task = *((Task*)parser->parse_string(input));
-		auto str = interpreter.interpret(task);
+		auto task = parser->parse_task(input);
+		auto str = interpreter.interpret(*task);
 		printf("%s\n", str.c_str());
 	}
 
@@ -56,8 +60,6 @@ int main( int argc, char** argv )
 
 // using std::string;
 
-
-
 // int main()
 // {
 //     // try {
@@ -71,8 +73,7 @@ int main( int argc, char** argv )
 //     //     std::cout << "EXCEPTION: " << e.what() << std::endl;
 //     // }
 
-
-//     // printf("hello world!\n"); 
+//     // printf("hello world!\n");
 //     // Term term((char*)"bird", true);
 //     // cout << term.word << endl;
 //     // cout << term.hash_value << endl;

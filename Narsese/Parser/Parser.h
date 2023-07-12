@@ -33,6 +33,13 @@ namespace PARSER
         std::unordered_map<std::string, long> names_qvar;
 
         Parser();
+        ~Parser()
+        {
+            if (this->buf != NULL)
+            {
+                free(this->buf);
+            }
+        }
 
         Args *transform(_ast *node);
 
