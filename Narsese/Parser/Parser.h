@@ -35,9 +35,16 @@ namespace PARSER
         Parser();
         ~Parser()
         {
+            /* 
+            Note:
+            To avoid memory leaks, the resouce should be free.
+            This is a bug of UNICC parser, so we have to do it at here.
+            */
             if (this->buf != NULL)
             {
-                free(this->buf);
+                free( this->buf );
+                this->buf = NULL;
+                this->bufend = this->buf;
             }
         }
 
