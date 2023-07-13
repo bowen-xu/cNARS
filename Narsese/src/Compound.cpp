@@ -25,27 +25,28 @@ Make sure all the `compounds` have the same `connector`
 */
 pTerms _merge_compounds(Connector connector_parent, Connector connector, const vector<pTerm> &compounds)
 {
-    auto get_all_terms = [compounds](std::vector<pTerms> &output)
+    auto get_all_terms = [connector_parent](const vector<pTerm> &input, std::vector<pTerms> &output)
     {
-        for (auto term : compounds)
+        for (auto term : input)
         {
             auto &cmpd = (Compound &)*term;
             const auto components = cmpd.terms;
             output.push_back(components);
         }
     };
+
     if (connector_parent == Connector::ExtensionalIntersection)
     {
         if (connector == Connector::ExtensionalSet)
         {
             std::vector<pTerms> terms_all;
-            get_all_terms(terms_all);
+            get_all_terms(compounds, terms_all);
             return Terms::intersection(terms_all);
         }
         else if (connector == Connector::IntensionalSet)
         {
             std::vector<pTerms> terms_all;
-            get_all_terms(terms_all);
+            get_all_terms(compounds, terms_all);
             return Terms::union_(terms_all);
         }
         else
@@ -58,13 +59,13 @@ pTerms _merge_compounds(Connector connector_parent, Connector connector, const v
         if (connector == Connector::ExtensionalSet)
         {
             std::vector<pTerms> terms_all;
-            get_all_terms(terms_all);
+            get_all_terms(compounds, terms_all);
             return Terms::union_(terms_all);
         }
         else if (connector == Connector::IntensionalSet)
         {
             std::vector<pTerms> terms_all;
-            get_all_terms(terms_all);
+            get_all_terms(compounds, terms_all);
             return Terms::intersection(terms_all);
         }
         else
@@ -75,13 +76,13 @@ pTerms _merge_compounds(Connector connector_parent, Connector connector, const v
     else if (connector_parent == Connector::ExtensionalDifference && connector == Connector::ExtensionalSet)
     {
         std::vector<pTerms> terms_all;
-        get_all_terms(terms_all);
+        get_all_terms(compounds, terms_all);
         return Terms::difference(terms_all);
     }
     else if (connector_parent == Connector::IntensionalDifference && connector == Connector::IntensionalSet)
     {
         std::vector<pTerms> terms_all;
-        get_all_terms(terms_all);
+        get_all_terms(compounds, terms_all);
         return Terms::difference(terms_all);
     }
     else if (connector_parent == connector)
@@ -139,6 +140,18 @@ std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connecto
         pTerms _terms;
         Connector _connector;
         /* Step 1. Categorize the terms according to their connectors. */
+
+        pTerms terms2 = terms;
+        pTerms terms = pTerms(new Terms(is_commutative));
+        for (auto term : *terms2)
+        {
+            if (term->is_compound() && term->connector == connector_parent)
+                for (auto _term : *(term->terms))
+                    terms->push_back(_term);
+            else
+                terms->push_back(term);
+        }
+
         for (auto term : *terms)
         {
             _connector = Connector::None; // `None` means the connector of the term is not cared about, because it just needs to be added into the parent compound-term as a whole.
