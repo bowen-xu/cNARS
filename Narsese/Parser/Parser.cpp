@@ -3,9 +3,6 @@
 
 using namespace PARSER;
 
-
-
-
 Parser::Parser()
 {
     this->eof = '\n';
@@ -27,19 +24,50 @@ Parser::Parser()
     // std::cout << "valid count: " << valid_cnt << std::endl;
 }
 
-void* Parser::parse_string(std::string& input)
+void *Parser::parse_string(std::string &input)
 {
+    try
+    {
+        char_fetcher.switch_string_mode();
+        char_fetcher.fill(input);
 
-    char_fetcher.switch_string_mode();
-    char_fetcher.fill(input);
+        this->parse();
+
+        char_fetcher.clear();
+        /* Print AST */
+        if (this->ast)
+        {
+            // this->ast_print( stderr, this->ast );
+            Args *rets = this->transform(this->ast);
+            this->ast = this->ast_free(this->ast);
+            auto ret = (*rets)[0];
+            delete rets;
+            return ret;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(std::string("Parsing error. Message: \n\t")+e.what());
+        return nullptr;
+    }
+    catch (...)
+    {
+        throw std::runtime_error("Unknow error when parsing");
+        return nullptr;
+    }
+    return nullptr;
+}
+
+void *Parser::parse_input()
+{
+    char_fetcher.switch_stdin_mode();
     this->parse();
-    char_fetcher.clear();
     /* Print AST */
-    if( this->ast )
+    if (this->ast)
     {
         // this->ast_print( stderr, this->ast );
-        Args* rets = this->transform( this->ast );
-        this->ast = this->ast_free( this->ast );
+        Args *rets = this->transform(this->ast);
+        this->ast = this->ast_free(this->ast);
         auto ret = (*rets)[0];
         delete rets;
         return ret;
@@ -47,40 +75,23 @@ void* Parser::parse_string(std::string& input)
     return nullptr;
 }
 
-void* Parser::parse_input()
-{
-    char_fetcher.switch_stdin_mode();
-    this->parse();
-    /* Print AST */
-    if( this->ast )
-    {
-        // this->ast_print( stderr, this->ast );
-        Args* rets = this->transform( this->ast );
-        this->ast = this->ast_free( this->ast );
-        auto ret = (*rets)[0];
-        delete rets;
-        return ret;
-    }
-    return nullptr;
-}     
-
-Args* Parser::transform(_ast* node)
+Args *Parser::transform(_ast *node)
 {
     int i;
-    char* name;
+    char *name;
     void *ret = nullptr;
 
-    if( !node )
+    if (!node)
         return nullptr;
 
-    auto& rets = *(new Args);
+    auto &rets = *(new Args);
 
     while (node)
     {
         ret = nullptr;
         name = (char *)(node->emit);
 
-        if(node->token) // leaf-node
+        if (node->token) // leaf-node
         {
             auto fptr = this->get_function(name);
             if (fptr != 0)

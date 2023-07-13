@@ -19,7 +19,6 @@ using TASK::Task;
 using TERM::pTerm;
 using TERM::Term;
 
-
 PYBIND11_MODULE(narsese, m)
 {
     m.doc() = R"pbdoc(
@@ -62,37 +61,63 @@ PYBIND11_MODULE(narsese, m)
         .value("List", CONNECTOR::Connector::List, "#");
 
     m.def(
-        "parse", [](std::string line)
-        { return NARSESEPARSER::parser->parse_task(line); },
+        "parse",
+        [](std::string line) -> py::object
+        {
+            try
+            {
+                auto task = NARSESEPARSER::parser->parse_task(line);
+                if (task == nullptr)
+                    throw std::runtime_error("Parsing error - Please check the syntax.");
+                return py::cast(task);
+            }
+            catch (std::exception &e)
+            {
+                // std::cout << e.what() << std::endl;
+                PyErr_SetString(PyExc_RuntimeError, e.what());
+                return py::none();
+            }
+            catch (...)
+            {
+                PyErr_SetString(PyExc_RuntimeError, "Unknown error occurred.");
+                return pybind11::none();
+            }
+        },
         py::arg("line"));
 
     py::class_<TERM::pTerm>(m, "Term")
-        .def(py::init([]()
-                      { return TERM::Term::create(); }))
-        .def(py::init([](std::string word)
-                      { return TERM::Term::create((char *)word.c_str(), nullptr); }))
-        // .def(py::init([](TERM::pTerm subject, COPULA::Copula copula, TERM::pTerm predicate) { return STATEMENT::Statement::create(subject, copula, predicate); }))
+        .def(py::init(
+            []()
+            {
+                return TERM::Term::create();
+            }))
+        .def(py::init(
+            [](std::string word)
+            {
+                return TERM::Term::create((char *)word.c_str(), nullptr);
+            }))
         .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
 
     py::class_<STATEMENT::pStatement, TERM::pTerm>(m, "Statement")
-        .def(py::init([](TERM::pTerm subject, COPULA::Copula copula, TERM::pTerm predicate)
-                      { return STATEMENT::Statement::create(subject, copula, predicate); }))
+        .def(py::init(
+            [](TERM::pTerm subject, COPULA::Copula copula, TERM::pTerm predicate)
+            {
+                return STATEMENT::Statement::create(subject, copula, predicate);
+            }))
         .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
 
     py::class_<COMPOUND::pCompound, TERM::pTerm>(m, "Compound")
-        .def(py::init([](CONNECTOR::Connector connector, py::args args)
-                      { 
-                        std::vector<TERM::pTerm> terms{};
-                        for (auto arg:args)
-                            terms.push_back(py::cast<TERM::pTerm>(arg));
-                        return COMPOUND::Compound::create(connector, terms); }))
+        .def(py::init(
+            [](CONNECTOR::Connector connector, py::args args)
+            {
+                std::vector<TERM::pTerm> terms{};
+                for (auto arg : args)
+                    terms.push_back(py::cast<TERM::pTerm>(arg));
+                return COMPOUND::Compound::create(connector, terms);
+            }))
         .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
 
     py::class_<TASK::pTask>(m, "Task")
-        // .def(py::init([]()
-        //               { return TERM::Term::create(); }))
-        // .def(py::init([](std::string word)
-        //               { return TERM::Term::create((char *)word.c_str(), nullptr); }))
         .def_property_readonly("term", &TASK::pTask::term)
         .def_property_readonly("sentence", &TASK::pTask::sentence)
         .def("__repr__", &TASK::pTask::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);

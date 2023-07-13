@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	printf("go:\n");
 
 	auto test_cases = std::vector<const char*>{
-		"<robin-->bird>.",
+		"<robin-->bird>",
 		"(&&, A, B).",
 		"(&&, A1, B1).",
 		"(&&, A2, B2).",
