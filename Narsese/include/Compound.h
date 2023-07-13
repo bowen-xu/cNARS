@@ -29,6 +29,13 @@ namespace COMPOUND
     using TERM::TermType;
     using UTILS::Hash;
 
+    class pCompound : public pTerm
+    {
+    public:
+        pCompound(Term *term, void *interpreter = nullptr) : pTerm(term, interpreter) {}
+        pCompound() : pTerm() {}
+    };
+
     class Compound : public Term
     {
     public:
@@ -44,9 +51,9 @@ namespace COMPOUND
         Compound(Connector connector, pTerm term, bool is_input = false) : Compound(connector, {term}, is_input){};
 
         template <typename _T>
-        inline static auto create(Connector connector, _T &terms)
+        static pCompound create(Connector connector, _T &terms)
         {
-            return pTerm(new Compound(connector, terms));
+            return pCompound((Term*)new Compound(connector, terms));
         }
 
         static auto ExtensionalSet(std::initializer_list<pTerm> terms)

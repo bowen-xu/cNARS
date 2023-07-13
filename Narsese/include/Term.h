@@ -1,16 +1,17 @@
 #ifndef _TERM_H
 #define _TERM_H
 
-#include "../utils/IndexVar.h"
-#include "../utils/hash.h"
 #include "Connector.h"
 #include "Copula.h"
+#include "utils/IndexVar.h"
+#include "utils/hash.h"
 #include <algorithm>
 #include <array>
 #include <list>
 #include <memory>
 #include <string>
 #include <unordered_set>
+#include <fmt/core.h>
 
 // #include "../utils/repr.h"
 
@@ -35,13 +36,17 @@ namespace TERM
         void *_interpreter = nullptr;
 
     public:
+        using std::shared_ptr<Term>::shared_ptr;
         pTerm(Term *term, void *interpreter = nullptr) : std::shared_ptr<Term>(term), _interpreter(interpreter) {}
-        pTerm() : std::shared_ptr<Term>() {}
+        // pTerm() : std::shared_ptr<Term>() {}
 
         ~pTerm();
 
+        std::string __repr__(void *interpreter) const;
+
     private:
         void _free_from_interpreter();
+        // void _free_from_interpreter() {}
     };
 
     typedef std::shared_ptr<Terms> pTerms;
@@ -101,6 +106,11 @@ namespace TERM
         Term() : hash_value(Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this})), is_hashed(true){};
         // Term(std::string _word) : word(_word) {}
 
+        ~Term()
+        {
+            // std::cout << "free Term " << (size_t)this << std::endl;
+        }
+
         // bool __eq__(Term o)
         // {
         //     if (o.type == TermType::ATOM) return hash_value == o.hash_value;
@@ -130,8 +140,12 @@ namespace TERM
 
         static pTerm create()
         {
-            return pTerm(new Term());
+            auto term = new Term();
+            // std::cout << "create Term " << (size_t)term << std::endl;
+            return pTerm(term);
         }
+
+        static pTerm create(char *word, void *interpreter);
 
         inline static pTerm clone(pTerm term)
         {

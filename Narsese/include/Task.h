@@ -22,7 +22,16 @@ namespace TASK
         auto &term() { return *sentence->term; }
     };
 
-    typedef std::shared_ptr<Task> pTask;
+    class pTask : public std::shared_ptr<Task>
+    {
+    public:
+        using std::shared_ptr<Task>::shared_ptr;
+
+        auto term() { return (*this)->sentence->term; }
+        auto sentence() { return (*this)->sentence; }
+
+        std::string __repr__(void *interpreter) const;
+    };
 } // namespace TAKS
 
 #endif // _TAKS_H_

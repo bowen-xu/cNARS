@@ -12,6 +12,7 @@ using TASK::Task;
 
 // using namespace PARSER;
 using NARSESEPARSER::NarseseParser;
+
 int main(int argc, char **argv)
 {
 	auto parser = std::shared_ptr<NarseseParser>(new NarseseParser);
@@ -29,6 +30,7 @@ int main(int argc, char **argv)
 	{
 		std::string input(test_cases[i]);
 		auto task = parser->parse_task(input);
+		// task.__repr__(nullptr);
 		auto str = interpreter.interpret(*task);
 		printf("%s\n", str.c_str());
 	}

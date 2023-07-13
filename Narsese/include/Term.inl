@@ -49,13 +49,15 @@ namespace TERM
     {
         if (this->type != other.type)
             return false;
-        if (hash(*this) == hash(other))
-        {
-            if (!this->has_var && !other.has_var)
-                return true;
-            else if (!(this->has_var && other.has_var))
-                return false;
-        }
+        if (hash(*this) != hash(other))
+            return false;
+        // if (hash(*this) == hash(other))
+        // {
+        //     if (!this->has_var && !other.has_var)
+        //         return true;
+        //     else if (!(this->has_var && other.has_var))
+        //         return false;
+        // }
         if (this->is_atom())
         {
             if (this->is_var || other.is_var)

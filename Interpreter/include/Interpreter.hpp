@@ -5,6 +5,7 @@
 #include "Narsese/include/Interval.h"
 #include "Narsese/include/Statement.h"
 #include "Narsese/include/Task.h"
+#include "Narsese/include/Sentence.h"
 #include "Narsese/include/Tense.h"
 #include "Narsese/include/Variable.h"
 
@@ -15,6 +16,7 @@
 
 namespace INTERPRETER
 {
+    using SENTENCE::Sentence;
     using std::map;
     using std::string;
     using TASK::Task;
@@ -128,18 +130,18 @@ namespace INTERPRETER
         }
 
         string interpret(Term &term, bool colored = false);
-
         string interpret(Task &task, bool colored = false);
+        string interpret(Sentence &sentence, bool colored = false);
 
-        // inline void colored(bool set = true)
-        // {
-        //     this->_is_colored = set;
-        // }
+            // inline void colored(bool set = true)
+            // {
+            //     this->_is_colored = set;
+            // }
 
-        // private:
-        //     bool _is_colored = true;
+            // private:
+            //     bool _is_colored = true;
 
-        void reset()
+            void reset()
         {
 
             for (auto pair : objects)

@@ -105,8 +105,15 @@ namespace SENTENCE
         inline bool is_quest() { return punct == PUNCTUATION::Quest; }
     };
 
-    typedef std::shared_ptr<Sentence> pSentence;
+    // typedef std::shared_ptr<Sentence> pSentence;
+    class pSentence : public std::shared_ptr<Sentence>
+    {
+    public:
+        using std::shared_ptr<Sentence>::shared_ptr;
 
+        std::string __repr__(void *interpreter = nullptr) const;
+    };
+    
     class Judgement : public Sentence
     {
     public:

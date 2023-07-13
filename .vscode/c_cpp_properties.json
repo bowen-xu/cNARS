@@ -7,7 +7,9 @@
                 "/opt/homebrew/Cellar/boost/1.81.0_1/include",
                 "/opt/homebrew/Cellar/fmt/9.1.0/include",
                 "/opt/homebrew/Cellar/googletest/1.13.0/include",
-                "${workspaceFolder}"
+                "${workspaceFolder}",
+                "${workspaceFolder}/pybind11/include",
+                "/opt/homebrew/Caskroom/miniforge/base/envs/PyNARS/include/python3.8"
             ],
             "defines": [],
             "macFrameworkPath": [

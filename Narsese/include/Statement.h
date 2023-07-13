@@ -19,6 +19,13 @@ namespace STATEMENT
     using UTILS::Hash;
     using UTILS::hash;
 
+    class pStatement : public pTerm
+    {
+    public:
+        pStatement(Term *term, void *interpreter = nullptr) : pTerm(term, interpreter) {}
+        pStatement() : pTerm() {}
+    };
+    
     class Statement : public Term
     {
 
@@ -76,6 +83,12 @@ namespace STATEMENT
             this->is_hashed = true;
 
             return this->hash_value;
+        }
+
+        static pStatement create(pTerm subject, Copula copula, pTerm predicate)
+        {
+            auto statement = new Statement(subject, copula, predicate, false);
+            return pStatement(statement);
         }
     };
 

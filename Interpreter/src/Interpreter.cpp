@@ -98,16 +98,16 @@ string Interpreter::interpret(Term &term, bool colored)
         if (!term.is_operation)
         {
             if (colored)
-                str_ret = fmt::format(color_term, fmt::format("{:x}", (long)(&term)));
+                str_ret = fmt::format(color_term, fmt::format("0x{:x}", (long)(&term)));
             else
-                str_ret = fmt::format("{:x}", (long)(&term));
+                str_ret = fmt::format("0x{:x}", (long)(&term));
         }
         else
         {
             if (colored)
-                str_ret = fmt::format(color_operation, fmt::format("^{:x}", (long)(&term)));
+                str_ret = fmt::format(color_operation, fmt::format("^0x{:x}", (long)(&term)));
             else
-                str_ret = fmt::format("^{:x}", (long)(&term));
+                str_ret = fmt::format("^0x{:x}", (long)(&term));
         }
     }
     else if (term.type == TermType::STATEMENT)
@@ -217,11 +217,6 @@ string Interpreter::interpret(Term &term, bool colored)
 string Interpreter::interpret(Task &task, bool colored)
 {
     auto &budget = *task.budget;
-    auto &sentence = *task.sentence;
-    auto &punct = sentence.punct;
-    auto &term = *sentence.term;
-    auto key = term.hash_value;
-    auto str_term = interpret(term, colored);
 
     float p = budget.priority;
     float d = budget.durability;
@@ -233,6 +228,26 @@ string Interpreter::interpret(Task &task, bool colored)
     auto color_priority = fmt::bg(fmt::rgb(std::min(255, int(255 * p / 2 + 10)), 10, 10));
     auto color_durability = fmt::bg(fmt::rgb(10, std::min(255, int(255 * d / 2 + 10)), 10));
     auto color_quality = fmt::bg(fmt::rgb(10, 10, std::min(255, int(255 * q / 1.5 + 10))));
+
+    auto str_sentence = interpret(*task.sentence);
+
+    if (colored)
+    {
+        return fmt::format("{}{}{} {}", fmt::format(color_priority, " {:.2f} ", p), fmt::format(color_durability, " {:.2f} ", d), fmt::format(color_quality, " {:.2f} ", q), str_sentence);
+    }
+    else
+    {
+        return fmt::format("${:.2f};{:.2f};{:.2f}$ {}", p, d, q, str_sentence);
+    }
+}
+
+string Interpreter::interpret(Sentence &sentence, bool colored)
+{
+    auto &punct = sentence.punct;
+    auto &term = *sentence.term;
+    auto key = term.hash_value;
+    auto str_term = interpret(term, colored);
+
 
     string str_truth;
     string str_stamp;
@@ -252,7 +267,7 @@ string Interpreter::interpret(Task &task, bool colored)
         str_punct = fmt::format(color_punct, SENTENCE::PUNCTUATION::Repr[(int)(sentence.punct)]);
         str_stamp = sentence.stamp->is_eternal ? "" : fmt::format(color_tense, "{} ", TENSE::Repr[sentence.stamp->tense()]);
 
-        return fmt::format("{}{}{} {}{} {}{}", fmt::format(color_priority, " {:.2f} ", p), fmt::format(color_durability, " {:.2f} ", d), fmt::format(color_quality, " {:.2f} ", q), str_term, str_punct, str_stamp, str_truth);
+        return fmt::format("{}{} {}{} {}{}", str_term, str_punct, str_stamp, str_truth);
     }
     else
     {
@@ -269,6 +284,7 @@ string Interpreter::interpret(Task &task, bool colored)
         str_punct = SENTENCE::PUNCTUATION::Repr[(int)(sentence.punct)];
         str_stamp = sentence.stamp->is_eternal ? "" : fmt::format("{} ", TENSE::Repr[sentence.stamp->tense()]);
 
-        return fmt::format("${:.2f};{:.2f};{:.2f}$ {}{} {}{}", p, d, q, str_term, str_punct, str_stamp, str_truth);
+        return fmt::format("{}{} {}{}", str_term, str_punct, str_stamp, str_truth);
     }
 }
+
