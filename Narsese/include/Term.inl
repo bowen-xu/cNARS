@@ -1,9 +1,15 @@
+// #ifdef _TERM_H
 #ifndef _TERM_INL
 #define _TERM_INL
 
 #include "./Term.h"
-// #include "./Statement.h"
-// #include "./Compound.h"
+#include "./Statement.h"
+#include "./Compound.h"
+#include "./Variable.h"
+
+// #include "Compound.inl"
+// #include "Statement.inl"
+
 
 namespace TERM
 {
@@ -173,6 +179,45 @@ namespace TERM
         return false;
     }
 
+    inline pTerm Term::clone(pTerm term)
+    {
+        using VARIABLE::Variable;
+        using STATEMENT::Statement;
+        using COMPOUND::Compound;
+        if (term->has_var)
+        {
+            if (term->is_atom())
+            {
+                if (term->is_var)
+                {
+                    return pTerm(new Variable((Variable &)*term));
+                }
+                else
+                {
+                    throw std::runtime_error("The type of the term is invalid.");
+                }
+                // return pTerm(new T)
+            }
+            else if (term->is_statement())
+            {
+                return pTerm(new Statement((Statement &)*term, true));
+            }
+            else if (term->is_compound())
+            {
+                return pTerm(new Compound((Compound &)*term, true));
+            }
+            else
+            {
+                throw std::runtime_error("Invalid TermType.");
+            }
+        }
+        // else
+        // {
+        //     return term;
+        // }
+        return term;
+    }
 }
 
 #endif //_TERM_INL
+// #endif // _TERM_H

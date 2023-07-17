@@ -39,7 +39,6 @@ namespace INDEXVAR
         bool _is_hashed : 1 = false;
 
         std::weak_ptr<IndexVar> predecessor;
-        // IndexVar *predecessor;
         vector<pIndexVar> successors;
         bool _is_built = false;
 
@@ -48,6 +47,27 @@ namespace INDEXVAR
         inline static pIndexVar create()
         {
             return pIndexVar(new IndexVar());
+        }
+
+        static pIndexVar clone(const pIndexVar &other)
+        {
+            auto pindexvar = IndexVar::create();
+            auto &indexvar = *pindexvar;
+            /* _indices_normalized */
+            if (other->_indices_normalized != nullptr)
+            {
+                indexvar._indices_normalized = std::make_shared<vector<int>>();
+                *indexvar._indices_normalized = *other->_indices_normalized;
+            }
+            /* positions */
+            indexvar.positions = other->positions;
+            /* indices */
+            for (auto idx : other->indices)
+                indexvar.indices.push_back(pInt(new int(*idx)));
+            /* hash_value */
+            indexvar._hash_value = other->_hash_value;
+            indexvar._is_hashed = other->_is_hashed;
+            return pindexvar;
         }
 
         std::shared_ptr<vector<int>> normalize();

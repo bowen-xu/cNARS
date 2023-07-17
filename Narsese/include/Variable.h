@@ -4,6 +4,10 @@
 #include "Term.h"
 #include "utils/hash.h"
 
+// namespace TERM
+// {
+//     class Term;
+// }
 namespace VARIABLE
 {
     using std::string;
@@ -27,6 +31,7 @@ namespace VARIABLE
 
     public:
         Variable(VarPrefix _prefix, string _name);
+        Variable(const Variable &other);
 
         virtual size_t do_hashing()
         {
@@ -35,11 +40,13 @@ namespace VARIABLE
             return this->hash_value;
         }
 
-    // public:
-    //     operator string () const {
-    //         return string("<Variable: ") + word + name + string(">");
-    //     }
+        // public:
+        //     operator string () const {
+        //         return string("<Variable: ") + word + name + string(">");
+        //     }
     };
 } // namespace VARIABLE
+
+// #include "Variable.inl"
 
 #endif // _VARIABLE_H

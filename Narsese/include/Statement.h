@@ -8,6 +8,12 @@
 #include <memory>
 #include <unordered_set>
 
+namespace TERM
+{
+    class Term;
+    class pTerm;
+}
+
 namespace STATEMENT
 {
     using TermType = TERM::TermType;
@@ -25,42 +31,19 @@ namespace STATEMENT
         pStatement(Term *term, void *interpreter = nullptr) : pTerm(term, interpreter) {}
         pStatement() : pTerm() {}
     };
-    
+
     class Statement : public Term
     {
 
     public:
-        bool _is_commutative;
+        // const TermType Term::type = TermType::ATOM;
+        bool is_commutative;
         // bool is_higher_order;
 
     public:
-        Statement(pTerm _subject, Copula _copula, pTerm _predicate, bool is_input = false)
-        {
-            this->is_hashed = false;
-            this->type = TermType::STATEMENT;
-            this->subject = is_input ? _subject : Term::clone(_subject);
-            this->predicate = is_input ? _predicate : Term::clone(_predicate);
-            this->copula = _copula;
-            this->_is_commutative = COPULA::is_commutative(_copula);
-            this->hash_value = hash(*this);
-            this->complexity += (subject->complexity + predicate->complexity);
-            // word = string("<") + _subject.word + COPULA::Repr[_copula] + _predicate.word + string(">");
-            // word_sorted = subject.hash_value > predicate.hash_value ? word: (string("<") + predicate.word + COPULA::Repr[_copula] + subject.word + string(">"));
+        Statement(pTerm _subject, Copula _copula, pTerm _predicate, bool is_input = false);
 
-            // components = unordered_set<Term*>{&subject, &predicate};
-
-            this->is_higher_order = COPULA::is_higher_order(copula);
-            this->is_operation = _predicate->is_operation;
-
-            if (this->predicate->is_atom() && this->predicate->is_operation && this->subject->is_compound() && this->subject->connector == CONNECTOR::PRODUCT)
-                this->is_operation = true;
-
-            // is_operation = predicate.is_operation;
-            auto terms = {this->subject, this->predicate};
-            this->_refresh_var_status(terms);
-            this->_init_indexvars(this->_index_vars(), terms);
-            this->_build_indexvars();
-        }
+        Statement(const Statement &other, bool deep);
 
         virtual size_t do_hashing()
         {
@@ -93,5 +76,6 @@ namespace STATEMENT
     };
 
 } // namespace STATEMENT
+// #include "Statement.inl"
 
 #endif // _STATEMENT_H

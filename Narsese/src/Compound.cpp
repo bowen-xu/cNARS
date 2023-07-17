@@ -1,4 +1,8 @@
+// #include "../include/Narsese.h"
 #include "../include/Compound.h"
+#include <tuple>
+#include <vector>
+#include "utils/hash.h"
 #include <map>
 #include <numeric>
 #include <tuple>
@@ -286,11 +290,11 @@ std::tuple<Connector, pTerms> prepocess_terms(Compound &self, Connector connecto
     return {connector_parent, terms};
 }
 
-Compound::Compound(Connector connector, pTerms terms, bool is_input)
+Compound::Compound(Connector connector, pTerms terms, bool is_input) : Term(TermType::COMPOUND)
 {
     this->is_hashed = false;
 
-    this->type = TermType::COMPOUND;
+    // this->type = TermType::COMPOUND;
     this->connector = connector;
     pTerms _terms;
     std::tie(this->connector, _terms) = prepocess_terms(*this, connector, terms);

@@ -14,6 +14,20 @@
 #include <fmt/core.h>
 
 // #include "../utils/repr.h"
+namespace VARIABLE
+{
+    class Variable;
+}
+
+namespace COMPOUND
+{
+    class Compound;
+}
+
+namespace STATEMENT
+{
+    class Statement;
+}
 
 namespace TERM
 {
@@ -36,7 +50,8 @@ namespace TERM
         void *_interpreter = nullptr;
 
     public:
-        using std::shared_ptr<Term>::shared_ptr;
+        // using std::shared_ptr<Term>::shared_ptr;
+        pTerm() : std::shared_ptr<Term>::shared_ptr() {}
         pTerm(Term *term, void *interpreter = nullptr) : std::shared_ptr<Term>(term), _interpreter(interpreter) {}
         // pTerm() : std::shared_ptr<Term>() {}
 
@@ -104,23 +119,7 @@ namespace TERM
         // Term(char *_word);
         // string word;
         Term() : hash_value(Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this})), is_hashed(true){};
-        // Term(std::string _word) : word(_word) {}
-
-        ~Term()
-        {
-            // std::cout << "free Term " << (size_t)this << std::endl;
-        }
-
-        // bool __eq__(Term o)
-        // {
-        //     if (o.type == TermType::ATOM) return hash_value == o.hash_value;
-        //     else return false;
-        // }
-
-        // inline bool operator ==(Term& term)
-        // {
-        //     return __eq__(term);
-        // }
+        Term(const TermType _type) : type(_type) {}
 
         size_t __hash__()
         {
@@ -145,32 +144,9 @@ namespace TERM
             return pTerm(term);
         }
 
-        static pTerm create(char *word, void *interpreter);
+        static pTerm create(const char *word, void *interpreter = nullptr);
 
-        inline static pTerm clone(pTerm term)
-        {
-            if (term->has_var)
-            {
-                return term;
-                if (term->is_atom())
-                {
-                }
-                else if (term->is_statement())
-                {
-                }
-                else if (term->is_compound())
-                {
-                }
-                else
-                {
-                    throw std::runtime_error("Invalid TermType.");
-                }
-            }
-            else
-            {
-                return term;
-            }
-        }
+        static pTerm clone(pTerm term);
 
         bool operator==(Term &other);
 
@@ -515,6 +491,6 @@ namespace TERM
     };
 
 } // namespace Term
-#include "./Term.inl"
+// #include "Term.inl"
 
 #endif // _TERM_H

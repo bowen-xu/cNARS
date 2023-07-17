@@ -12,7 +12,7 @@ using TERM::pTerm;
 
 namespace TERM
 {
-    pTerm Term::create(char *word, void *interpreter = nullptr)
+    pTerm Term::create(const char *word, void *interpreter)
     {
         if (interpreter == nullptr)
         {

@@ -1,9 +1,12 @@
-namespace NARSESE
-{
-
+// namespace NARSESE
+// {
+#ifndef _NARSESE_H
+#define _NARSESE_H
 #include "Term.h"
-#include "Operation.h"
 #include "Variable.h"
+
+
+#include "Operation.h"
 #include "Interval.h"
 #include "Connector.h"
 #include "Copula.h"
@@ -18,5 +21,10 @@ namespace NARSESE
 #include "Task.h"
 #include "Link.h"
 
+#include "Term.inl"
+#include "Variable.inl"
+#include "Statement.inl"
+#include "Compound.inl"
 
-} // namespace NARSESE
+// } // namespace NARSESE
+#endif // _NARSESE_H

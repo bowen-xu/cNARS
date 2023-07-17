@@ -3,7 +3,6 @@
 #include "./Connector.h"
 #include "./Term.h"
 #include <string>
-// #include <list>
 #include "../utils/hash.h"
 #include "Config.h"
 #include <functional>
@@ -16,6 +15,13 @@ using boost::container::list;
 #include <list>
 using std::list;
 #endif
+
+namespace TERM
+{
+    class Term;
+    class pTerm;
+    // class pTerms;
+}
 
 namespace COMPOUND
 {
@@ -50,10 +56,12 @@ namespace COMPOUND
         Compound(Connector connector, std::initializer_list<pTerm> terms, bool is_input = false);
         Compound(Connector connector, pTerm term, bool is_input = false) : Compound(connector, {term}, is_input){};
 
+        Compound(const Compound &other, bool deep);
+
         template <typename _T>
         static pCompound create(Connector connector, _T &terms)
         {
-            return pCompound((Term*)new Compound(connector, terms));
+            return pCompound((Term *)new Compound(connector, terms));
         }
 
         static auto ExtensionalSet(std::initializer_list<pTerm> terms)
@@ -64,7 +72,7 @@ namespace COMPOUND
         {
             return pTerm(new Compound(Connector::IntensionalSet, terms));
         }
-        
+
         virtual size_t do_hashing()
         {
             std::vector<size_t> values{(size_t)TermType::COMPOUND, (size_t)'(', (size_t)connector};
@@ -94,14 +102,16 @@ namespace COMPOUND
         }
 
     private:
-        Compound(Connector &connector)
+        Compound(Connector &connector) : Term(TermType::COMPOUND)
         {
-            this->type = TermType::COMPOUND;
+            // this->type = TermType::COMPOUND;
             this->connector = connector;
             this->terms = pTerms(new Terms(CONNECTOR::is_commutative(connector)));
         }
     };
 
 } // namespace COMPOUND
+
+// #include "Compound.inl"
 
 #endif // _COMPOUND_H

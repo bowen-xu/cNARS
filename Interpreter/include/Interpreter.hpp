@@ -1,6 +1,7 @@
 #ifndef _INTERPRETER_H_
 #define _INTERPRETER_H_
 
+#include "Narsese/include/Term.h"
 #include "Narsese/include/Compound.h"
 #include "Narsese/include/Interval.h"
 #include "Narsese/include/Statement.h"
@@ -8,6 +9,7 @@
 #include "Narsese/include/Sentence.h"
 #include "Narsese/include/Tense.h"
 #include "Narsese/include/Variable.h"
+// #include "Narsese/include/Narsese.h"
 
 #include <iomanip>
 #include <map>

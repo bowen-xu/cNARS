@@ -1,3 +1,4 @@
+#include "../include/Term.h"
 #include "../include/Statement.h"
 #include <string>
 #include <vector>

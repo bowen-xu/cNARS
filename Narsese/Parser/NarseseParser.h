@@ -16,23 +16,8 @@ namespace NARSESEPARSER
 			names_ivar.clear();
 			names_dvar.clear();
 			names_qvar.clear();
-			// try
-			// {
 			TASK::Task *task = ((TASK::Task *)this->parse_string(input));
-			// if (task == nullptr)
-			// 	throw std::runtime_error("Parsing error: Please check the syntax.");
 			return TASK::pTask(task);
-			// }
-			// catch (std::exception& e)
-			// {
-			// 	throw std::runtime_error(e.what());
-			// 	return nullptr;
-			// };
-			// catch (...)
-			// {
-			// 	throw std::runtime_error("Unkown parsing error");
-			// 	return nullptr;
-			// };
 		}
 		TASK::pTask parse_task(const char *input)
 		{

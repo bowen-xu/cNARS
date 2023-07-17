@@ -26,34 +26,21 @@ Parser::Parser()
 
 void *Parser::parse_string(std::string &input)
 {
-    try
-    {
-        char_fetcher.switch_string_mode();
-        char_fetcher.fill(input);
+    char_fetcher.switch_string_mode();
+    char_fetcher.fill(input);
 
-        this->parse();
+    this->parse();
 
-        char_fetcher.clear();
-        /* Print AST */
-        if (this->ast)
-        {
-            // this->ast_print( stderr, this->ast );
-            Args *rets = this->transform(this->ast);
-            this->ast = this->ast_free(this->ast);
-            auto ret = (*rets)[0];
-            delete rets;
-            return ret;
-        }
-    }
-    catch (std::exception &e)
+    char_fetcher.clear();
+    /* Print AST */
+    if (this->ast)
     {
-        throw std::runtime_error(std::string("Parsing error. Message: \n\t")+e.what());
-        return nullptr;
-    }
-    catch (...)
-    {
-        throw std::runtime_error("Unknow error when parsing");
-        return nullptr;
+        // this->ast_print( stderr, this->ast );
+        Args *rets = this->transform(this->ast);
+        this->ast = this->ast_free(this->ast);
+        auto ret = (*rets)[0];
+        delete rets;
+        return ret;
     }
     return nullptr;
 }

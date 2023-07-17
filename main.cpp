@@ -1,8 +1,9 @@
 #include "Interpreter/include/Interpreter.hpp"
 #include "Narsese/Parser/NarseseParser.h"
-#include "Narsese/Parser/generate.h"
-#include "Narsese/include/Statement.h"
-#include "Narsese/include/Task.h"
+// #include "Narsese/Parser/generate.h"
+// #include "Narsese/include/Statement.h"
+// #include "Narsese/include/Task.h"
+#include "Narsese/include/Narsese.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -20,7 +21,7 @@ int main(int argc, char **argv)
 	printf("go:\n");
 
 	auto test_cases = std::vector<const char*>{
-		"<robin-->bird>",
+		"<robin-->bird>.",
 		"(&&, A, B).",
 		"(&&, A1, B1).",
 		"(&&, A2, B2).",
