@@ -1,13 +1,12 @@
 // #include "../include/Narsese.h"
 #include "../include/Compound.h"
-#include <tuple>
-#include <vector>
 #include "utils/hash.h"
 #include <map>
 #include <numeric>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+#include "Interpreter/include/Interpreter.hpp"
 
 using namespace COMPOUND;
 using std::tuple;
@@ -329,4 +328,18 @@ Compound::Compound(Connector connector, std::vector<pTerm> &terms, bool is_input
 
 Compound::Compound(Connector connector, std::initializer_list<pTerm> terms, bool is_input) : Compound::Compound(connector, pTerms(new Terms(terms, CONNECTOR::is_commutative(connector))), is_input)
 {
+}
+
+void COMPOUND::pybind_compound(py::module &m)
+{
+    py::class_<COMPOUND::pCompound, TERM::pTerm>(m, "Compound")
+        .def(py::init(
+            [](CONNECTOR::Connector connector, py::args args)
+            {
+                std::vector<TERM::pTerm> terms{};
+                for (auto arg : args)
+                    terms.push_back(py::cast<TERM::pTerm>(arg));
+                return COMPOUND::Compound::create(connector, terms);
+            }))
+        .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
 }

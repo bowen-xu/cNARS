@@ -1,11 +1,12 @@
 #ifndef _COMPOUND_H
 #define _COMPOUND_H
+#include "../utils/hash.h"
 #include "./Connector.h"
 #include "./Term.h"
-#include <string>
-#include "../utils/hash.h"
 #include "Config.h"
 #include <functional>
+#include <pybind11/pybind11.h>
+#include <string>
 #include <vector>
 
 #if SRC_LIST == LIST_BOOST
@@ -25,6 +26,7 @@ namespace TERM
 
 namespace COMPOUND
 {
+    namespace py = pybind11;
 
     using CONNECTOR::Connector;
     using std::string;
@@ -109,6 +111,8 @@ namespace COMPOUND
             this->terms = pTerms(new Terms(CONNECTOR::is_commutative(connector)));
         }
     };
+    
+    void pybind_compound(py::module &m);
 
 } // namespace COMPOUND
 

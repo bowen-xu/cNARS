@@ -12,3 +12,15 @@ std::string pTask::__repr__(void *interpreter = nullptr) const
     auto str = _interpreter.interpret(**this);
     return fmt::format("<Task: {}>", str);
 }
+
+namespace TASK
+{
+    void pybind_task(py::module &m)
+    {
+        py::class_<TASK::pTask>(m, "Task")
+        .def_property_readonly("term", &TASK::pTask::term)
+        .def_property_readonly("sentence", &TASK::pTask::sentence)
+        .def("__repr__", &TASK::pTask::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+    }
+
+}

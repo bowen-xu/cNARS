@@ -7,6 +7,7 @@
 #include "Term.h"
 #include <memory>
 #include <unordered_set>
+#include <pybind11/pybind11.h>
 
 namespace TERM
 {
@@ -16,6 +17,8 @@ namespace TERM
 
 namespace STATEMENT
 {
+    namespace py = pybind11;
+    
     using TermType = TERM::TermType;
     using COPULA::Copula;
     using std::string;
@@ -75,6 +78,7 @@ namespace STATEMENT
         }
     };
 
+    void pybind_statement(py::module &m);
 } // namespace STATEMENT
 // #include "Statement.inl"
 

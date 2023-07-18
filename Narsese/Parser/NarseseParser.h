@@ -2,9 +2,11 @@
 #define _NARSESE_PARSER_H_
 
 #include "./Parser.h"
+#include <pybind11/pybind11.h>
 
 namespace NARSESEPARSER
 {
+	namespace py = pybind11;
 	using PARSER::Args;
 	using PARSER::Parser;
 	class NarseseParser : protected Parser
@@ -103,6 +105,8 @@ namespace NARSESEPARSER
 	extern void *confidence(Parser *self, const Args &args);
 	extern void *frequency(Parser *self, const Args &args);
 	extern void *integer(Parser *self, const Args &args);
+
+	void pybind_parse(py::module &m);
 
 } // namespace NARSESEPARSER
 

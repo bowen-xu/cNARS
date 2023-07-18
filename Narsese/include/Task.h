@@ -4,9 +4,12 @@
 #include "./Budget.h"
 #include "./Sentence.h"
 #include <memory>
+#include <pybind11/pybind11.h>
 
 namespace TASK
 {
+    namespace py = pybind11;
+    
     using BUDGET::Budget;
     using BUDGET::pBudget;
     using SENTENCE::Judgement;
@@ -32,6 +35,9 @@ namespace TASK
 
         std::string __repr__(void *interpreter) const;
     };
+
+    void pybind_task(py::module &m);
+
 } // namespace TAKS
 
 #endif // _TAKS_H_

@@ -12,6 +12,7 @@
 #include <string>
 #include <unordered_set>
 #include <fmt/core.h>
+#include <pybind11/pybind11.h>
 
 // #include "../utils/repr.h"
 namespace VARIABLE
@@ -31,6 +32,8 @@ namespace STATEMENT
 
 namespace TERM
 {
+    namespace py = pybind11;
+    
     using CONNECTOR::Connector;
     using COPULA::Copula;
     // using REPR::repr;
@@ -40,6 +43,7 @@ namespace TERM
     using std::unordered_set;
     using UTILS::Hash;
     using UTILS::hash;
+
 
     class Terms;
     class Term;
@@ -489,6 +493,8 @@ namespace TERM
             }
         }
     };
+    void pybind_term(py::module &m);
+    void pybind_terms(py::module &m);
 
 } // namespace Term
 // #include "Term.inl"

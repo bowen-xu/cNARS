@@ -1,29 +1,31 @@
 #ifndef _CONNECTOR_H
 #define _CONNECTOR_H
 
+#include <pybind11/pybind11.h>
 #include <string>
 
 namespace CONNECTOR
 {
+    namespace py = pybind11;
     using std::string;
     enum Connector
     {
         None = -1,
-        Conjunction = 0,                // "&&"
-        Disjunction = 1,                // "||"
-        Product = 2,                    // "*"
-        ParallelEvents = 3,             // "&|"
-        SequentialEvents = 4,           // "&/"
-        IntensionalIntersection = 5,    // "|"
-        ExtensionalIntersection = 6,    // "&"
-        ExtensionalDifference = 7,      // "-"
-        IntensionalDifference = 8,      // "~"
-        Negation = 9,                   // "--"
-        IntensionalSet = 10,            // "["
-        ExtensionalSet = 11,            // "{"
-        IntensionalImage = 12,          // "\"
-        ExtensionalImage = 13,          // "/"
-        List =14                        // "#"
+        Conjunction = 0,             // "&&"
+        Disjunction = 1,             // "||"
+        Product = 2,                 // "*"
+        ParallelEvents = 3,          // "&|"
+        SequentialEvents = 4,        // "&/"
+        IntensionalIntersection = 5, // "|"
+        ExtensionalIntersection = 6, // "&"
+        ExtensionalDifference = 7,   // "-"
+        IntensionalDifference = 8,   // "~"
+        Negation = 9,                // "--"
+        IntensionalSet = 10,         // "["
+        ExtensionalSet = 11,         // "{"
+        IntensionalImage = 12,       // "\"
+        ExtensionalImage = 13,       // "/"
+        List = 14                    // "#"
     };
     const Connector CONJUNCTION = Connector::Conjunction;
     const Connector DISJUNCTION = Connector::Disjunction;
@@ -52,24 +54,6 @@ namespace CONNECTOR
     const bool _multiple_only[] = {true, true, true, true, true, true, true, true, true, false, false, false, true, true, false};
     const bool _temporal[] = {false, false, false, true, true, false, false, false, false, false, false, false, false, false, false};
 
-    // extern inline bool is_commutative(Connector connector);
-    // extern inline bool is_single_only(Connector connector);
-    // extern inline bool is_double_only(Connector connector);
-    // extern inline bool is_multiple_only(Connector connector);
-    // extern inline bool is_temporal(Connector connector);
-    // extern inline bool check_valid(Connector connector, unsigned int len_terms);
-    // static inline bool is_commutative(Connector connector) { return _commutative[connector]; }
-    // static inline bool is_single_only(Connector connector) { return _single_only[connector]; }
-    // static inline bool is_double_only(Connector connector) { return _double_only[connector]; }
-    // static inline bool is_multiple_only(Connector connector) { return _multiple_only[connector]; }
-    // static inline bool is_temporal(Connector connector) { return _temporal[connector]; }
-    // static inline bool check_valid(Connector connector, unsigned int len_terms)
-    // {
-    //     return (!is_single_only(connector) || len_terms == 1) && 
-    //         (!is_double_only(connector) || len_terms == 2) && 
-    //         (!is_multiple_only(connector) || len_terms > 1) && 
-    //         (len_terms > 0);
-    // }
     inline bool is_commutative(Connector connector) { return _commutative[connector]; }
     inline bool is_reducible(Connector connector) { return _reducible[connector]; }
     inline bool is_single_only(Connector connector) { return _single_only[connector]; }
@@ -78,11 +62,12 @@ namespace CONNECTOR
     inline bool is_temporal(Connector connector) { return _temporal[connector]; }
     inline bool check_valid(Connector connector, unsigned int len_terms)
     {
-        return (!is_single_only(connector) || len_terms == 1) && 
-            (!is_double_only(connector) || len_terms == 2) && 
-            (!is_multiple_only(connector) || len_terms > 1) && 
-            (len_terms > 0);
+        return (!is_single_only(connector) || len_terms == 1) &&
+               (!is_double_only(connector) || len_terms == 2) &&
+               (!is_multiple_only(connector) || len_terms > 1) &&
+               (len_terms > 0);
     }
+    void pybind_connnector(py::module &m);
 }
 
-# endif //_CONNECTOR_H
+#endif //_CONNECTOR_H

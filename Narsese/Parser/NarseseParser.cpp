@@ -824,7 +824,7 @@ void *NARSESEPARSER::budget(Parser *self, const Args &args)
 {
 	void *ret;
 	double p, d, q;
-	
+
 	if (args.size() >= 1)
 	{
 		p = *(double *)args[0];
@@ -986,4 +986,32 @@ NarseseParser::NarseseParser() : Parser()
 	regist("confidence", confidence);
 	regist("frequency", frequency);
 	regist("integer", integer);
+}
+
+void NARSESEPARSER::pybind_parse(py::module &m)
+{
+	m.def(
+		"parse",
+		[](std::string line) -> py::object
+		{
+			try
+			{
+				auto task = NARSESEPARSER::parser->parse_task(line);
+				if (task == nullptr)
+					throw std::runtime_error("Parsing error - Please check the syntax.");
+				return py::cast(task);
+			}
+			catch (std::exception &e)
+			{
+				// std::cout << e.what() << std::endl;
+				PyErr_SetString(PyExc_RuntimeError, e.what());
+				return py::none();
+			}
+			catch (...)
+			{
+				PyErr_SetString(PyExc_RuntimeError, "Unknown error occurred.");
+				return pybind11::none();
+			}
+		},
+		py::arg("line"));
 }

@@ -8,9 +8,12 @@
 #include "Global.h"
 #include <memory>
 #include <string>
+#include <pybind11/pybind11.h>
 
 namespace SENTENCE
 {
+    namespace py = pybind11;
+
     using EVIDENCE::Base;
     using EVIDENCE::pBase;
     using TERM::pTerm;
@@ -148,6 +151,7 @@ namespace SENTENCE
         Quest(pTerm _term, pStamp _stamp=nullptr) : Sentence(_term, PUNCTUATION::Quest, nullptr, _stamp) {}
     };
 
+    void pybind_sentence(py::module &m);
 } // namespace SENTENCE
 
 #endif //_SENTENCE_H_

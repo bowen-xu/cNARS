@@ -3,7 +3,9 @@
 #include "../utils/hash.h"
 #include "Interpreter/include/Interpreter.hpp"
 #include <list>
+#include <pybind11/stl.h>
 #include <string>
+#include <vector>
 
 // using namespace TERM;
 using INTERPRETER::Interpreter;
@@ -68,7 +70,68 @@ namespace TERM
                 interpreter = this->_interpreter;
         }
         auto &_interpreter = *(Interpreter *)interpreter;
-        
+
         return fmt::format("<{}: {}>", mark, _interpreter.interpret(**this));
     }
+
+    void pybind_term(py::module &m)
+    {
+        py::class_<TERM::pTerm>(m, "Term")
+            .def(py::init(
+                []()
+                {
+                    return TERM::Term::create();
+                }))
+            .def(py::init(
+                [](std::string word)
+                {
+                    return TERM::Term::create((char *)word.c_str(), nullptr);
+                }))
+            .def_property_readonly(
+                "subject",
+                [](const pTerm &self) -> py::object
+                {
+                    if (self->subject == nullptr)
+                        return py::none();
+                    return py::cast(self->subject);
+                })
+            .def_property_readonly(
+                "predicate",
+                [](const pTerm &self) -> py::object
+                {
+                    if (self->predicate == nullptr)
+                        return py::none();
+                    return py::cast(self->predicate);
+                })
+            .def_property_readonly(
+                "terms",
+                [](const pTerm &self) -> py::object
+                {
+                    if (self->is_atom())
+                        return py::none();
+                    else if (self->is_statement())
+                        return py::iter(py::cast(std::vector<pTerm>{self->subject, self->predicate}));
+                    else if (self->is_compound())
+                        return py::make_iterator(self->terms->begin(), self->terms->end());
+                    else
+                    {
+                        PyErr_SetString(PyExc_TypeError, fmt::format("In file <{}> line <{}>: Invalid TermType", __FILE__, __LINE__).c_str());
+                        return py::none();
+                    }
+                })
+            .def_property_readonly(
+                "copula",
+                [](const pTerm &self) -> py::object
+                {
+                    if (self->copula == Copula::None)
+                        return py::none();
+                    return py::cast(self->copula);
+                })
+            .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+    }
+
+    void pybind_terms(py::module &m)
+    {
+    }
+
 }
