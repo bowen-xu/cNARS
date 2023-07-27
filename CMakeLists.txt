@@ -60,6 +60,7 @@ target_link_libraries(main
     ${Boost_LIBRARIES}
     fmt::fmt
     pybind11::module
+    pybind11::embed
 )
 
 enable_testing()
