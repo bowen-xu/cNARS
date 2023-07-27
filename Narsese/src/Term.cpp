@@ -1,6 +1,6 @@
 #include "../include/Term.h"
 #include "../include/Copula.h"
-#include "../utils/hash.h"
+#include "utils/hash.h"
 #include "Interpreter/include/Interpreter.hpp"
 #include <list>
 #include <pybind11/stl.h>

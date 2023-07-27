@@ -9,7 +9,7 @@ namespace NARSESEPARSER
 	namespace py = pybind11;
 	using PARSER::Args;
 	using PARSER::Parser;
-	class NarseseParser : protected Parser
+	class PYBIND11_EXPORT NarseseParser : protected Parser
 	{
 	public:
 		NarseseParser();

@@ -70,7 +70,7 @@ namespace TERM
 
     typedef std::shared_ptr<Terms> pTerms;
 
-    enum TermType
+    enum PYBIND11_EXPORT TermType
     {
         ATOM = 0,
         STATEMENT = 1,
@@ -80,7 +80,7 @@ namespace TERM
         VARIABLE = -3
     };
 
-    class Term
+    class PYBIND11_EXPORT Term
     {
     public:
         /* for statement */
@@ -124,7 +124,10 @@ namespace TERM
         // string word;
         Term() : hash_value(Hash{}(std::initializer_list<size_t>{(size_t)TermType::ATOM, (size_t)this})), is_hashed(true){};
         Term(const TermType _type) : type(_type) {}
-
+        // ~Term()
+        // {
+        //     std::cout << (size_t)this << " Term freed" << std::endl;
+        // }
         size_t __hash__()
         {
             return this->is_hashed ? this->hash_value : this->do_hashing();
@@ -196,7 +199,7 @@ namespace TERM
         }
     };
 
-    class Iterator
+    class PYBIND11_EXPORT Iterator
     {
     public:
         // using iterator_category = typename std::iterator_traits<pTerm *>::iterator_category;
@@ -304,7 +307,7 @@ namespace TERM
         void *it_;
     };
 
-    class Terms
+    class PYBIND11_EXPORT Terms
     {
     public:
         struct compare

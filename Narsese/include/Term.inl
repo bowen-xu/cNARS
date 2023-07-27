@@ -10,7 +10,6 @@
 // #include "Compound.inl"
 // #include "Statement.inl"
 
-
 namespace TERM
 {
 
@@ -44,6 +43,7 @@ namespace TERM
 
     inline pTerm::~pTerm()
     {
+        // std::cout << (size_t)this << " pTerm freed" << std::endl;
         if (*this != nullptr && (*this)->is_atom() && this->_interpreter != nullptr && this->use_count() == 2)
         {
             // std::cout << "free Term from the interpreter." << std::endl;
@@ -181,9 +181,9 @@ namespace TERM
 
     inline pTerm Term::clone(pTerm term)
     {
-        using VARIABLE::Variable;
-        using STATEMENT::Statement;
         using COMPOUND::Compound;
+        using STATEMENT::Statement;
+        using VARIABLE::Variable;
         if (term->has_var)
         {
             if (term->is_atom())
@@ -220,4 +220,4 @@ namespace TERM
 }
 
 #endif //_TERM_INL
-// #endif // _TERM_H
+       // #endif // _TERM_H

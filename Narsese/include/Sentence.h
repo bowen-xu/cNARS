@@ -89,7 +89,7 @@ namespace SENTENCE
 
     typedef std::shared_ptr<Stamp> pStamp;
 
-    class Sentence
+    class PYBIND11_EXPORT Sentence
     {
     public:
         pTerm term;

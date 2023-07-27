@@ -7,7 +7,7 @@ namespace TENSE
 {
     using std::string;
 
-    enum Tense
+    enum PYBIND11_EXPORT Tense
     {
         Past = 0,    // :\:
         Present = 1, // :|:

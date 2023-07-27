@@ -1,6 +1,6 @@
 #ifndef _COMPOUND_H
 #define _COMPOUND_H
-#include "../utils/hash.h"
+#include "utils/hash.h"
 #include "./Connector.h"
 #include "./Term.h"
 #include "Config.h"
@@ -37,14 +37,14 @@ namespace COMPOUND
     using TERM::TermType;
     using UTILS::Hash;
 
-    class pCompound : public pTerm
+    class PYBIND11_EXPORT pCompound : public pTerm
     {
     public:
         pCompound(Term *term, void *interpreter = nullptr) : pTerm(term, interpreter) {}
         pCompound() : pTerm() {}
     };
 
-    class Compound : public Term
+    class PYBIND11_EXPORT Compound : public Term
     {
     public:
         // string word_sorted;

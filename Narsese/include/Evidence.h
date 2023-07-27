@@ -1,7 +1,7 @@
 #ifndef _EVIDENCE_H
 #define _EVIDENCE_H
 
-#include "../utils/hash.h"
+#include "utils/hash.h"
 #include "Config.h"
 #include "Global.h"
 #include <algorithm>

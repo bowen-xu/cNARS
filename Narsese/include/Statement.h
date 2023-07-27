@@ -1,8 +1,8 @@
 #ifndef _STATEMENT_H
 #define _STATEMENT_H
 
-#include "../utils/defines.h"
-#include "../utils/hash.h"
+#include "utils/defines.h"
+#include "utils/hash.h"
 #include "Copula.h"
 #include "Term.h"
 #include <memory>
@@ -28,14 +28,14 @@ namespace STATEMENT
     using UTILS::Hash;
     using UTILS::hash;
 
-    class pStatement : public pTerm
+    class PYBIND11_EXPORT pStatement : public pTerm
     {
     public:
         pStatement(Term *term, void *interpreter = nullptr) : pTerm(term, interpreter) {}
         pStatement() : pTerm() {}
     };
 
-    class Statement : public Term
+    class PYBIND11_EXPORT Statement : public Term
     {
 
     public:

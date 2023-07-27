@@ -35,14 +35,26 @@ namespace PARSER
         Parser();
         ~Parser()
         {
-            /* 
+            /*
             Note:
             To avoid memory leaks, the resouce should be free.
             This is a bug of UNICC parser, so we have to do it at here.
             */
             if (this->buf != NULL)
             {
-                free( this->buf );
+                // std::cout << this->stacksize << std::endl;
+                // if (this->buf != this->bufend)
+                // {
+                // std::cout<< "stacksize=" << this->stacksize << std::endl;
+                free(this->buf);
+                // std::cout<< "free" << std::endl;
+                //     std::cout << "free 1" << std::endl;
+                // }
+                // else
+                // {
+                //     free(this->buf);
+                //     std::cout << "free 2" << std::endl;
+                // }
                 this->buf = NULL;
                 this->bufend = this->buf;
             }

@@ -8,7 +8,7 @@ namespace CONNECTOR
 {
     namespace py = pybind11;
     using std::string;
-    enum Connector
+    enum PYBIND11_EXPORT Connector
     {
         None = -1,
         Conjunction = 0,             // "&&"

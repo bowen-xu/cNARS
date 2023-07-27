@@ -15,7 +15,7 @@ namespace TASK
     using SENTENCE::Judgement;
     using SENTENCE::pSentence;
     using SENTENCE::Sentence;
-    class Task
+    class PYBIND11_EXPORT Task
     {
     public:
         pBudget budget;
@@ -25,7 +25,7 @@ namespace TASK
         auto &term() { return *sentence->term; }
     };
 
-    class pTask : public std::shared_ptr<Task>
+    class PYBIND11_EXPORT pTask : public std::shared_ptr<Task>
     {
     public:
         using std::shared_ptr<Task>::shared_ptr;

@@ -6,6 +6,7 @@ using namespace PARSER;
 Parser::Parser()
 {
     this->eof = '\n';
+    this->stacksize = 0;
 
     // const char *empty = "";
     // const char* start = "start";

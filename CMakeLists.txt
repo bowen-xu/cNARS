@@ -29,6 +29,11 @@ file(GLOB SOURCES_INTERPRETER Interpreter/src/*.cpp)
 file(GLOB SOURCES_UTILS utils/*.cpp)
 file(GLOB SOURCES_CONFIG Config.cpp Global.cpp)
 file(GLOB SOURCES_TEST Tests/*.cpp)
+set(SOURCES_NARSESE ${SOURCES_NARSESE} CACHE INTERNAL "Narsese source files")
+set(SOURCES_PARSER ${SOURCES_PARSER} CACHE INTERNAL "Parser source files")
+set(SOURCES_INTERPRETER ${SOURCES_INTERPRETER} CACHE INTERNAL "Interpreter source files")
+set(SOURCES_UTILS ${SOURCES_UTILS} CACHE INTERNAL "Utils source files")
+set(SOURCES_CONFIG ${SOURCES_CONFIG} CACHE INTERNAL "Config source files")
 
 pybind11_add_module(narsese Narsese.cpp ${SOURCES_NARSESE} ${SOURCES_UTILS} ${SOURCES_PARSER} ${SOURCES_CONFIG} ${SOURCES_INTERPRETER})
 target_include_directories(narsese PUBLIC
