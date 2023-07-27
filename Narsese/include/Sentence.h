@@ -109,7 +109,7 @@ namespace SENTENCE
     };
 
     // typedef std::shared_ptr<Sentence> pSentence;
-    class pSentence : public std::shared_ptr<Sentence>
+    class PYBIND11_EXPORT pSentence : public std::shared_ptr<Sentence>
     {
     public:
         using std::shared_ptr<Sentence>::shared_ptr;

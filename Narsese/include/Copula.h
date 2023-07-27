@@ -8,7 +8,7 @@ namespace COPULA
 {
     namespace py = pybind11;
     using string = std::string;
-    enum Copula
+    enum PYBIND11_EXPORT Copula
     {
         None = -1,
         Inheritance = 0,              // -->

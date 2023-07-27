@@ -28,7 +28,7 @@ namespace NARSESEPARSER
 		}
 	};
 
-	static auto parser = std::shared_ptr<NarseseParser>(new NarseseParser);
+	static auto PYBIND11_EXPORT parser = std::shared_ptr<NarseseParser>(new NarseseParser);
 
 	/*prototypes*/
 	extern void *task(Parser *self, const Args &args);

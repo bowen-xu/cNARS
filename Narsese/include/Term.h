@@ -48,9 +48,9 @@ namespace TERM
     class Terms;
     class Term;
     // typedef std::shared_ptr<Term> pTerm;
-    class pTerm : public std::shared_ptr<Term>
+    class PYBIND11_EXPORT pTerm : public std::shared_ptr<Term>
     {
-    private:
+    public:
         void *_interpreter = nullptr;
 
     public:

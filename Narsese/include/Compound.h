@@ -29,7 +29,7 @@ namespace COMPOUND
     namespace py = pybind11;
 
     using CONNECTOR::Connector;
-    using std::string;
+    // using std::string;
     using TERM::pTerm;
     using TERM::pTerms;
     using TERM::Term;
