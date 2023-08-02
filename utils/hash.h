@@ -13,10 +13,16 @@ namespace UTILS
     {
     private:
         std::hash<std::string> hash_str;
+        std::hash<size_t> hash_size_t;
     public:
         size_t operator()(const std::string &str) const
         {
             return hash_str(str);
+        }
+
+        size_t operator()(const size_t &num) const
+        {
+            return hash_size_t(num);
         }
 
         template <typename _T>

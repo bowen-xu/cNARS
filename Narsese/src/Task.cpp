@@ -18,8 +18,8 @@ namespace TASK
     void pybind_task(py::module &m)
     {
         py::class_<TASK::pTask>(m, "Task")
-        .def_property_readonly("term", &TASK::pTask::term)
         .def_property_readonly("sentence", &TASK::pTask::sentence)
+        .def_property_readonly("term", &TASK::pTask::term)
         .def("__repr__", &TASK::pTask::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
     }
 

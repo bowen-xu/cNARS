@@ -15,6 +15,7 @@ namespace TASK
     using SENTENCE::Judgement;
     using SENTENCE::pSentence;
     using SENTENCE::Sentence;
+    using TERM::pTerm;
     class PYBIND11_EXPORT Task
     {
     public:
@@ -30,8 +31,8 @@ namespace TASK
     public:
         using std::shared_ptr<Task>::shared_ptr;
 
-        auto term() { return (*this)->sentence->term; }
-        auto sentence() { return (*this)->sentence; }
+        pTerm term() { return (*this)->sentence->term; }
+        pSentence sentence() { return (*this)->sentence; }
 
         std::string __repr__(void *interpreter) const;
     };

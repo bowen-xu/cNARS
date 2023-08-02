@@ -36,6 +36,9 @@ namespace SENTENCE
         const string Repr[] = {string("."), string("?"), string("!"), string("@")};
     }
 
+    class Stamp;
+    typedef std::shared_ptr<Stamp> pStamp;
+
     class Stamp
     {
     public:
@@ -62,6 +65,22 @@ namespace SENTENCE
                 evidential_base = pBase(new Base());
         }
 
+        static pStamp create(bool is_eternal = false)
+        {
+            return pStamp(new Stamp(is_eternal));
+        }
+
+        static pStamp create(signed int t_occurrence)
+        {
+            return pStamp(new Stamp(t_occurrence));
+        }
+
+        static pStamp create(signed int t_occurrence, signed int t_creation, signed int t_put, pBase evidential_base, bool is_eternal = true)
+        {
+            return pStamp(new Stamp(t_occurrence, t_creation, t_put, evidential_base, is_eternal));
+        }
+
+
         auto tense()
         {
             if (this->is_eternal)
@@ -87,7 +106,16 @@ namespace SENTENCE
         }
     };
 
-    typedef std::shared_ptr<Stamp> pStamp;
+    class Sentence;
+    
+    // typedef std::shared_ptr<Sentence> pSentence;
+    class PYBIND11_EXPORT pSentence : public std::shared_ptr<Sentence>
+    {
+    public:
+        using std::shared_ptr<Sentence>::shared_ptr;
+
+        std::string __repr__(void *interpreter = nullptr) const;
+    };
 
     class PYBIND11_EXPORT Sentence
     {
@@ -106,16 +134,16 @@ namespace SENTENCE
         inline bool is_question() { return punct == PUNCTUATION::Question; }
         inline bool is_goal() { return punct == PUNCTUATION::Goal; }
         inline bool is_quest() { return punct == PUNCTUATION::Quest; }
+
+        static pSentence create(pTerm _term, PUNCTUATION::Punctuation _punct, pTruth _truth, pStamp _stamp);
     };
 
-    // typedef std::shared_ptr<Sentence> pSentence;
-    class PYBIND11_EXPORT pSentence : public std::shared_ptr<Sentence>
+    
+
+    inline pSentence Sentence::create(pTerm _term, PUNCTUATION::Punctuation _punct, pTruth _truth = nullptr, pStamp _stamp=nullptr)
     {
-    public:
-        using std::shared_ptr<Sentence>::shared_ptr;
-
-        std::string __repr__(void *interpreter = nullptr) const;
-    };
+        return pSentence(new Sentence(_term, _punct, _truth, _stamp));
+    }
     
     class Judgement : public Sentence
     {
