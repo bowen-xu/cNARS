@@ -43,6 +43,15 @@ namespace TRUTH_FUNCTIONS
         return truth;
     }
 
+    inline auto truth_comparison(pTruth truth1, pTruth truth2)
+    {
+        auto truth = Truth::create();
+        auto w_p = And(truth1->f, truth2->f, truth1->c, truth2->c);
+        auto w = And(Or(truth1->f, truth2->f), truth1->c, truth2->c);
+        truth->set_w(w_p, w);
+        return truth;
+    }
+
 }
 
 #endif // _TRUTH_VALUE_FUNCTIONS_H

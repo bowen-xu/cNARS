@@ -45,7 +45,7 @@ namespace TRUTH
 
         inline void set_w(double w_p, double w)
         {
-            this->f = w_p / w;
+            this->f = w > 0 ? w_p / w : 0.5;
             this->c = w / (w + k);
         }
 
