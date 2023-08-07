@@ -10,6 +10,7 @@ void TRUTH::pybind_truth(py::module &m)
     .def_readwrite("f", &Truth::f)
     .def_readwrite("c", &Truth::c)
     .def_readwrite("k", &Truth::k)
+    .def_property_readonly("e", &Truth::e)
     .def("__repr__", &Truth::__repr__)
     ;
 }
