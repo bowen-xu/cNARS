@@ -2,8 +2,16 @@
 
 namespace BUDGET
 {
-    float Budget::_priority_default = 0.9;
-    float Budget::_durability_default = 0.9;
-    float Budget::_quality_default = 0.5;
+    double Budget::_priority_default = 0.9;
+    double Budget::_durability_default = 0.9;
+    double Budget::_quality_default = 0.5;
+
+    void pybind_budget(py::module &m)
+    {
+        py::class_<Budget, pBudget>(m, "Budget")
+            .def(py::init(&Budget::create), py::arg("p")=Budget::_priority_default, py::arg("d")=Budget::_durability_default, py::arg("q")=Budget::_quality_default)
+            .def("__repr__", [](Budget& self)
+                 { return fmt::format("<Budget: ${:.2f};{:.2f};{:.2f}$>", self.priority, self.durability, self.quality); });
+    }
 
 } // namespace BUDGET

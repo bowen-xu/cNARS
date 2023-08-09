@@ -36,6 +36,7 @@ PYBIND11_MODULE(narsese, m)
     TASK::pybind_task(m);
     SENTENCE::pybind_sentence(m);
     TRUTH::pybind_truth(m);
+    BUDGET::pybind_budget(m);
 
     py::class_<NARSESEPARSER::NarseseParser, std::shared_ptr<NARSESEPARSER::NarseseParser>>(m, "NarseseParser");
     // .def_property_readonly("term", &TASK::pTask::term)
