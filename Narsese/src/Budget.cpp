@@ -10,6 +10,9 @@ namespace BUDGET
     {
         py::class_<Budget, pBudget>(m, "Budget")
             .def(py::init(&Budget::create), py::arg("p")=Budget::_priority_default, py::arg("d")=Budget::_durability_default, py::arg("q")=Budget::_quality_default)
+            .def_readwrite("p", &Budget::priority)
+            .def_readwrite("d", &Budget::durability)
+            .def_readwrite("q", &Budget::quality)
             .def("__repr__", [](Budget& self)
                  { return fmt::format("<Budget: ${:.2f};{:.2f};{:.2f}$>", self.priority, self.durability, self.quality); });
     }
