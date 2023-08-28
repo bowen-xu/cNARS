@@ -1,7 +1,8 @@
 #include "../include/Term.h"
 #include "../include/Copula.h"
-#include "utils/hash.h"
+#include "../include/Term.inl"
 #include "Interpreter/include/Interpreter.hpp"
+#include "utils/hash.h"
 #include <list>
 #include <pybind11/stl.h>
 #include <string>
@@ -45,7 +46,7 @@ namespace TERM
         interpreter.remove(term.hash_value);
     }
 
-    std::string pTerm::__repr__(void *interpreter = nullptr) const
+    std::string pTerm::__repr__(void *interpreter) const
     {
         std::string mark;
         if ((*this)->is_atom())
@@ -76,7 +77,7 @@ namespace TERM
 
     void pybind_term(py::module &m)
     {
-        py::class_<TERM::pTerm>(m, "Term")
+        py::class_<pTerm>(m, "Term")
             .def(py::init(
                 []()
                 {

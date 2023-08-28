@@ -61,7 +61,7 @@ namespace TERM
 
         ~pTerm();
 
-        std::string __repr__(void *interpreter) const;
+        std::string __repr__(void *interpreter = nullptr) const;
 
     private:
         void _free_from_interpreter();

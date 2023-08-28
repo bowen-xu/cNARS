@@ -1,6 +1,6 @@
 
 #include <pybind11/pybind11.h>
-// #include "Narsese/include/Narsese.h"
+#include "Narsese/include/Narsese.h"
 #include "Interpreter/include/Interpreter.hpp"
 #include "Narsese/Parser/NarseseParser.h"
 #include "Narsese/include/Term.h"
@@ -25,11 +25,11 @@ PYBIND11_MODULE(narsese, m)
         Narsese module
     )pbdoc";
 
+    TERM::pybind_term(m);
     COPULA::pybind_copula(m);
     CONNECTOR::pybind_connnector(m);
 
     NARSESEPARSER::pybind_parse(m);
-    TERM::pybind_term(m);
     STATEMENT::pybind_statement(m);
     COMPOUND::pybind_compound(m);
 

@@ -1,28 +1,26 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_SH "CMAKE_SH-NOTFOUND")
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_MACOSX_RPATH OFF)
 
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
-# set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_COMPILER "g++")
+
 project(cNARS)
 
-find_package(Boost 1.45.0 COMPONENTS spirit)
+find_package(Boost 1.45.0)
 include_directories(${Boost_INCLUDE_DIRS})
 find_package(fmt)
 find_package(GTest REQUIRED)
 
-# include_directories(
-# "${PROJECT_SOURCE_DIR}"
-# )
 add_subdirectory(pybind11)
 
 message(STATUS pybind11_INCLUDE_DIRS=${pybind11_INCLUDE_DIRS})
 message(STATUS pybind11_INCLUDE_DIR=${pybind11_INCLUDE_DIR})
 
-# message(STATUS PYTHON_INCLUDE_DIR=${pybind11::headers})
 file(GLOB SOURCES_NARSESE Narsese/src/*.cpp)
 file(GLOB SOURCES_PARSER Narsese/Parser/*.cpp)
 file(GLOB SOURCES_INTERPRETER Interpreter/src/*.cpp)
@@ -35,7 +33,7 @@ set(SOURCES_INTERPRETER ${SOURCES_INTERPRETER} CACHE INTERNAL "Interpreter sourc
 set(SOURCES_UTILS ${SOURCES_UTILS} CACHE INTERNAL "Utils source files")
 set(SOURCES_CONFIG ${SOURCES_CONFIG} CACHE INTERNAL "Config source files")
 
-pybind11_add_module(narsese Narsese.cpp ${SOURCES_NARSESE} ${SOURCES_UTILS} ${SOURCES_PARSER} ${SOURCES_CONFIG} ${SOURCES_INTERPRETER})
+pybind11_add_module(narsese Narsese.cpp Narsese/src/Term.cpp ${SOURCES_NARSESE} ${SOURCES_UTILS} ${SOURCES_PARSER} ${SOURCES_CONFIG} ${SOURCES_INTERPRETER})
 target_include_directories(narsese PUBLIC
     "${PROJECT_SOURCE_DIR}"
     "${PROJECT_SOURCE_DIR}/Narsese"
@@ -44,11 +42,10 @@ target_include_directories(narsese PUBLIC
     "${PROJECT_SOURCE_DIR}/utils"
 )
 
-# target_link_libraries(narsese STATIC pybind11::module)
 target_link_libraries(narsese ${Boost_LIBRARIES})
 target_link_libraries(narsese PRIVATE fmt::fmt)
 
-add_executable(main main.cpp ${SOURCES_NARSESE} ${SOURCES_UTILS} ${SOURCES_PARSER} ${SOURCES_CONFIG} ${SOURCES_INTERPRETER})
+add_executable(main main.cpp ${SOURCES_UTILS} ${SOURCES_PARSER} ${SOURCES_CONFIG} ${SOURCES_INTERPRETER} ${SOURCES_NARSESE})
 
 target_include_directories(main PUBLIC
     "${PROJECT_SOURCE_DIR}"
@@ -60,7 +57,6 @@ target_include_directories(main PUBLIC
     ${pybind11_INCLUDE_DIRS}
 )
 
-# target_link_libraries(main PRIVATE )
 target_link_libraries(main
     ${Boost_LIBRARIES}
     fmt::fmt
@@ -88,4 +84,3 @@ target_include_directories(tests PUBLIC
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")

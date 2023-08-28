@@ -1,15 +1,19 @@
 #ifndef _INTERPRETER_H_
 #define _INTERPRETER_H_
 
-#include "Narsese/include/Term.h"
 #include "Narsese/include/Compound.h"
 #include "Narsese/include/Interval.h"
+#include "Narsese/include/Sentence.h"
 #include "Narsese/include/Statement.h"
 #include "Narsese/include/Task.h"
-#include "Narsese/include/Sentence.h"
 #include "Narsese/include/Tense.h"
+#include "Narsese/include/Term.h"
 #include "Narsese/include/Variable.h"
-// #include "Narsese/include/Narsese.h"
+
+#include "Narsese/include/Compound.inl"
+#include "Narsese/include/Statement.inl"
+#include "Narsese/include/Term.inl"
+#include "Narsese/include/Variable.inl"
 
 #include <iomanip>
 #include <map>
@@ -135,15 +139,15 @@ namespace INTERPRETER
         string interpret(Task &task, bool colored = false);
         string interpret(Sentence &sentence, bool colored = false);
 
-            // inline void colored(bool set = true)
-            // {
-            //     this->_is_colored = set;
-            // }
+        // inline void colored(bool set = true)
+        // {
+        //     this->_is_colored = set;
+        // }
 
-            // private:
-            //     bool _is_colored = true;
+        // private:
+        //     bool _is_colored = true;
 
-            void reset()
+        void reset()
         {
 
             for (auto pair : objects)
