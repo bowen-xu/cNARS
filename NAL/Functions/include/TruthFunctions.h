@@ -11,15 +11,27 @@ namespace TRUTH_FUNCTIONS
     using namespace UNCERTAINTY_MAPPING_FUNCTIONS;
     using namespace BOOLEAN_FUNCTIONS;
 
-    inline auto truth_revision(pTruth truth1, pTruth truth2)
+    inline auto revision(double w_p_1, double w_p_2, double w_m_1, double w_m_2)
     {
-        auto w = truth1->w() + truth2->w();
-        auto w_p = truth1->w_p() + truth2->w_p();
-        auto k = truth1->k;
+        return std::pair{w_p_1 + w_p_2, w_m_1 + w_m_2};
+    }
+
+    inline auto truth_revision(Truth &truth1, Truth &truth2)
+    {
+        auto w = truth1.w() + truth2.w();
+        auto w_p = truth1.w_p() + truth2.w_p();
+        // auto &&[w_p, w_m] = revision(truth1.w_p(), truth2.w_p(), truth1.w_m(), truth2.w_m());
+        // auto w = w_p + w_m;
+        auto k = truth1.k;
         auto f = w_to_f(w_p, w);
         auto c = w_to_c(w, k);
-        truth1->f = f;
-        truth1->c = c;
+        truth1.f = f;
+        truth1.c = c;
+    }
+
+    inline auto truth_revision(pTruth truth1, pTruth truth2)
+    {
+        return truth_revision(*truth1, *truth2);
     }
 
     inline auto truth_deduction(pTruth truth1, pTruth truth2)
