@@ -13,6 +13,7 @@ namespace BUDGET
             .def_readwrite("p", &Budget::priority)
             .def_readwrite("d", &Budget::durability)
             .def_readwrite("q", &Budget::quality)
+            .def_static("quality_from_truth", [](TRUTH::pTruth t) { return Budget::quality_from_truth(*t); })
             .def("__repr__", [](Budget& self)
                  { return fmt::format("<Budget: ${:.2f};{:.2f};{:.2f}$>", self.priority, self.durability, self.quality); });
     }
