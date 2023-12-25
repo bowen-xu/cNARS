@@ -43,7 +43,7 @@ namespace UTILS
             return hash_container(vec);
         }
 
-    private:
+    protected:
         template <typename _Container>
         size_t hash_container(const _Container &vec) const
         {
