@@ -7,7 +7,7 @@ Parser::Parser()
 {
     this->eof = '\n';
     this->stacksize = 0;
-
+    this->buf = NULL;
     // const char *empty = "";
     // const char* start = "start";
     // auto len = sizeof(this->productions)/sizeof(this->productions[0]);
