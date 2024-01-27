@@ -21,12 +21,25 @@ namespace SENTENCE
             .value("Goal", PUNCTUATION::Punctuation::Goal, "!")
             .value("Quest", PUNCTUATION::Punctuation::Quest, "@")
             ;
+        py::class_<Stamp, pStamp>(m, "Stamp")
+            // .def(py::init(
+            //     [](bool eternal, long time)
+            //     {
+            //         return Stamp::create(eternal, time);
+            //     }), py::arg("eternal"), py::arg("time"))
+        ;
+        
         py::class_<pSentence>(m, "Sentence")
             .def(py::init(
                 [](TERM::pTerm term, PUNCTUATION::Punctuation _punct, pTruth _truth, pStamp _stamp)
                 {
                     return SENTENCE::Sentence::create(term, _punct, _truth, _stamp);
-                }))
-            .def("__repr__", &pSentence::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+                }), py::arg("term"), py::arg("punct"), py::arg("truth"), py::arg("stamp"))
+            // .def("__repr__", &pSentence::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+            .def("__repr__", [](const pSentence &self, void* interpreter=nullptr){
+                if (interpreter == nullptr)
+                    interpreter = (void *)&INTERPRETER::interpreter;
+                return self.__repr__(interpreter);
+            });
     }
 }

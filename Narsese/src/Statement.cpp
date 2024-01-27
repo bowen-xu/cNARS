@@ -20,6 +20,11 @@ namespace STATEMENT
                 {
                     return STATEMENT::Statement::create(subject, copula, predicate);
                 }))
-            .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+            // .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+            .def("__repr__", [](const pStatement &self, void* interpreter=nullptr){
+                if (interpreter == nullptr)
+                    interpreter = (void *)&INTERPRETER::interpreter;
+                return self.__repr__(interpreter);
+            });
     }
 }

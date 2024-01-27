@@ -341,5 +341,10 @@ void COMPOUND::pybind_compound(py::module &m)
                     terms.push_back(py::cast<TERM::pTerm>(arg));
                 return COMPOUND::Compound::create(connector, terms);
             }))
-        .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+        // .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+        .def("__repr__", [](const pCompound &self, void* interpreter=nullptr){
+                if (interpreter == nullptr)
+                    interpreter = (void *)&INTERPRETER::interpreter;
+                return self.__repr__(interpreter);
+            });
 }

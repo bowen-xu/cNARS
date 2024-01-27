@@ -20,7 +20,12 @@ namespace TASK
         py::class_<TASK::pTask>(m, "Task")
         .def_property_readonly("sentence", &TASK::pTask::sentence)
         .def_property_readonly("term", &TASK::pTask::term)
-        .def("__repr__", &TASK::pTask::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+        // .def("__repr__", &TASK::pTask::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+        .def("__repr__", [](const pTask &self, void* interpreter=nullptr){
+                if (interpreter == nullptr)
+                    interpreter = (void *)&INTERPRETER::interpreter;
+                return self.__repr__(interpreter);
+            });
     }
 
 }

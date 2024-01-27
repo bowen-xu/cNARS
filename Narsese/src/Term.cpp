@@ -128,7 +128,11 @@ namespace TERM
                         return py::none();
                     return py::cast(self->copula);
                 })
-            .def("__repr__", &TERM::pTerm::__repr__, py::arg("interpreter") = (void *)&INTERPRETER::interpreter);
+            .def("__repr__", [](const pTerm &self, void* interpreter=nullptr){
+                if (interpreter == nullptr)
+                    interpreter = (void *)&INTERPRETER::interpreter;
+                return self.__repr__(interpreter);
+            });
     }
 
     void pybind_terms(py::module &m)
